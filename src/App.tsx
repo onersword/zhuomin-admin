@@ -6,7 +6,7 @@ import ProductsPage from "@/pages/products";
 function App() {
   return (
     <Routes>
-      <Route element={<IndexPage />} path="/" />
+      <Route element={<UsersPage/>} path="/" />
       <Route element={<UsersPage />} path="/users" />
       <Route element={<ProductsPage />} path="/products" />
     </Routes>
