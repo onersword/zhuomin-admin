@@ -1,8 +1,8 @@
 import { setupWorker } from 'msw/browser';
 import { userHandlers } from './handlers/user';
-
+import { productHandlers } from './handlers/product';
 // 导出所有 handlers
-export const handlers = [...userHandlers];
+export const handlers = [...userHandlers, ...productHandlers];
 
 // 创建 worker
 export const worker = setupWorker(...handlers);
