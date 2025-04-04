@@ -4,8 +4,11 @@ import { http } from "./http";
 export interface User {
   id: number;
   name: string;
+  phone: string;
   email: string;
-  role: string;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // API endpoints
@@ -13,6 +16,7 @@ export const userApi = {
   // Get all users
   getUsers: async (): Promise<User[]> => {
     const response = await http.get<User[]>('/users');
+    console.log("get users", response);
     return response.data;
   },
 

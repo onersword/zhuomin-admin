@@ -1,8 +1,11 @@
 import DefaultLayout from "@/layouts/default";
 import { Button } from "@heroui/button";
 import UserList from "./userList";
+import { useEffect } from "react";
+import { userApi } from "@/requests/user";
 
 export default function UsersPage() {
+
   return (
     <DefaultLayout>
       <div>

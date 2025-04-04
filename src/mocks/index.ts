@@ -16,12 +16,15 @@ export const startMockService = async () => {
         serviceWorker: {
           url: '/mockServiceWorker.js',
         },
-        quiet: true,
+        quiet: false,
       });
       console.log('MSW started successfully');
+      console.log('Registered handlers:', handlers);
     } catch (error) {
       console.error('Failed to start MSW:', error);
     }
+  } else {
+    console.log('MSW is disabled');
   }
 };
 

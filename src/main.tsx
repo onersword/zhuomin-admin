@@ -8,16 +8,21 @@ import "@/styles/globals.css";
 import { startMockService } from "@/mocks";
 
 // Start mock service in development mode
-if (import.meta.env.DEV) {
-  startMockService();
+
+async function enableMocking() {
+  if (import.meta.env.DEV) {
+    await startMockService();
+  }
 }
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Provider>
-        <App />
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>,
-);
+enableMocking().then(() => {
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <Provider>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    </React.StrictMode>
+  );
+});

@@ -7,12 +7,14 @@ let users = [...mockUsers];
 
 export const userHandlers = [
   // Get all users
-  http.get('/users', () => {
-    return HttpResponse.json(users);
+  http.get('http://localhost:3000/api/users', () => {
+    console.log('Mock: GET /api/users');
+    return HttpResponse.json({data: users});
   }),
   
   // Get user by id
-  http.get('/users/:id', ({ params }) => {
+  http.get('http://localhost:3000/api/users/:id', ({ params }) => {
+    console.log('Mock: GET /api/users/:id', params);
     const user = users.find(u => u.id === Number(params.id));
     if (!user) {
       return new HttpResponse(null, { status: 404 });
@@ -21,7 +23,8 @@ export const userHandlers = [
   }),
 
   // Create user
-  http.post('/users', async ({ request }) => {
+  http.post('/api/users', async ({ request }) => {
+    console.log('Mock: POST /api/users');
     const newUser = await request.json() as Omit<User, 'id'>;
     const id = Math.max(...users.map(u => u.id)) + 1;
     const createdUser = { ...newUser, id };
@@ -30,7 +33,8 @@ export const userHandlers = [
   }),
 
   // Update user
-  http.put('/users/:id', async ({ params, request }) => {
+  http.put('/api/users/:id', async ({ params, request }) => {
+    console.log('Mock: PUT /api/users/:id', params);
     const id = Number(params.id);
     const updates = await request.json() as Partial<User>;
     const index = users.findIndex(u => u.id === id);
@@ -44,7 +48,8 @@ export const userHandlers = [
   }),
 
   // Delete user
-  http.delete('/users/:id', ({ params }) => {
+  http.delete('/api/users/:id', ({ params }) => {
+    console.log('Mock: DELETE /api/users/:id', params);
     const id = Number(params.id);
     const index = users.findIndex(u => u.id === id);
     

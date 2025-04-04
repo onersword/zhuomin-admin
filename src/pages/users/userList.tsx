@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -9,6 +9,10 @@ import {
   getKeyValue,
 } from "@heroui/table";
 import { Pagination } from "@heroui/pagination";
+import { User, userApi } from "@/requests/user";
+import { usePagination } from "@/hooks/usePagination";
+import { Button } from "@heroui/button";
+
 export const users = [
   {
     key: "1",
@@ -162,18 +166,51 @@ export const users = [
   },
 ];
 
-export default function App() {
-  const [page, setPage] = React.useState(1);
+const columns = [
+  {
+    label: "档案编号",
+    key: "documentId",
+  },
+  {
+    label: "姓名",
+    key: "name",
+  },
+  {
+    label: "手机号",
+    key: "phone",
+  },
+  {
+    label: "创建时间",
+    key: "createdAt",
+  },
+  {
+    label: "操作",
+    key: "actions",
+  },
+];
+
+export default function UserList() {
+  const [users, setUsers] = React.useState<User[]>([]);
   const rowsPerPage = 4;
 
-  const pages = Math.ceil(users.length / rowsPerPage);
+  const {
+    currentPage,
+    setCurrentPage,
+    currentPageData,
+    totalPages,
+  } = usePagination({
+    data: users,
+    pageSize: rowsPerPage,
+  });
 
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return users.slice(start, end);
-  }, [page, users]);
+  useEffect(() => {
+    userApi.getUsers().then((res: User[]) => {
+      console.log("user list", res);
+      if (res) {
+        setUsers(res);
+      }
+    });
+  }, []);
 
   return (
     <Table
@@ -185,9 +222,9 @@ export default function App() {
             showControls
             showShadow
             color="primary"
-            page={page}
-            total={pages}
-            onChange={(page: number) => setPage(page)}
+            page={currentPage}
+            total={totalPages}
+            onChange={(page: number) => setCurrentPage(page)}
           />
         </div>
       }
@@ -196,18 +233,27 @@ export default function App() {
       }}
     >
       <TableHeader>
-        <TableColumn key="name">NAME</TableColumn>
-        <TableColumn key="role">ROLE</TableColumn>
-        <TableColumn key="status">STATUS</TableColumn>
+        {columns.map((column) => (
+          <TableColumn key={column.key}>{column.label}</TableColumn>
+        ))}
       </TableHeader>
-      <TableBody items={items}>
-        {(item: any) => (
-          <TableRow key={item.name}>
-            {(columnKey: any) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+      <TableBody items={currentPageData}>
+        {(item: User) => (
+          <TableRow key={item.id}>
+            {columns.map((column) => (
+              <TableCell key={column.key}>
+                {column.key === "actions" ? (
+                  <Button color="primary">
+                    管理
+                  </Button>
+                ) : (
+                  getKeyValue(item, column.key as keyof User)
+                )}
+              </TableCell>
+            ))}
           </TableRow>
         )}
       </TableBody>
     </Table>
   );
 }
-
