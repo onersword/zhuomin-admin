@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import IndexPage from "@/pages/index";
 import UsersPage from "@/pages/users";
 import ProductsPage from "@/pages/products";
-import CreateUser from "./pages/users/createUser";
+import CreateUser from "./pages/users/createUser/createUser";
 
 function App() {
   return (
