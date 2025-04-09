@@ -21,7 +21,7 @@ export default function Sidebar() {
   const location = useLocation();
 
   useEffect(() => {
-    const path = location.pathname.split("/")[0] || "users";
+    const path = location.pathname.split("/")[1] || "users";
     setActiveKey(path);
   }, [location.pathname]);
 
