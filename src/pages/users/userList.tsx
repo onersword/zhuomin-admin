@@ -15,7 +15,7 @@ const columns = [
   },
   {
     label: "手机号",
-    key: "phone",
+    key: "phoneNumber",
   },
   {
     label: "创建时间",
@@ -29,7 +29,7 @@ const columns = [
 
 export default function UserList() {
   const [users, setUsers] = useState<User[]>([]);
-  const rowsPerPage = 4;
+  const rowsPerPage = 20;
 
   const {
     currentPage,
@@ -40,13 +40,15 @@ export default function UserList() {
     data: users,
     pageSize: rowsPerPage,
   });
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     userApi.getUsers().then((res: User[]) => {
       console.log("user list", res);
-      if (res) {
-        setUsers(res);
+      if (res.length) {
+        setUsers(res.filter((item) => item.status === 2))
       }
+      setLoading(false);
     });
   }, []);
 
@@ -55,15 +57,17 @@ export default function UserList() {
       aria-label="Example table with client side pagination"
       bottomContent={
         <div className="flex w-full justify-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="primary"
-            page={currentPage}
-            total={totalPages}
-            onChange={(page: number) => setCurrentPage(page)}
-          />
+          {!loading && (
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              color="primary"
+              page={currentPage}
+              total={totalPages}
+              onChange={(page: number) => setCurrentPage(page)}
+            />
+          )}
         </div>
       }
       classNames={{

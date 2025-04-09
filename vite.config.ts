@@ -6,14 +6,16 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 export default defineConfig({
  
   plugins: [react(), tsconfigPaths(), nodePolyfills()],
-  // server: {
-  //   port: 5173,
-  //   proxy: {
-  //     '/api': {
-  //       target: 'http://localhost:3000',
-  //       changeOrigin: true,
-  //       rewrite: (path) => path.replace(/^\/api/, '')
-  //     }
-  //   }
-  // }
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://118.195.149.216:3000',
+        changeOrigin: true,
+        // rewrite: (path) => {
+        //   console.log("path", path);
+        //   return path.replace(/^\/api/, '')
+        // }
+      }
+    }
+  }
 })

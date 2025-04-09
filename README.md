@@ -52,3 +52,8 @@ Licensed under the [MIT license](https://github.com/frontio-ai/vite-template/blo
 
 ### add heroUI item
 npx heroui-cli@latest add button input
+
+## admin
+
+admin
+mr-lao-123

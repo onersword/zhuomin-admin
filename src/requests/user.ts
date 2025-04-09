@@ -2,11 +2,11 @@ import { http } from "./http";
 
 // Types
 export interface User {
-  id: number;
+  id: string;
   name: string;
-  phone: string;
-  email: string;
-  documentId: string;
+  phoneNumber: string;
+  status: number;
+  wechatId: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -15,27 +15,27 @@ export interface User {
 export const userApi = {
   // Get all users
   getUsers: async (): Promise<User[]> => {
-    const response = await http.get<User[]>('/users');
+    const response = await http.get<User[]>('/api/users');
     console.log("get users", response);
-    return response.data;
+    return response;
   },
 
   // Get user by id
   getUserById: async (id: number): Promise<User> => {
     const response = await http.get<User>(`/users/${id}`);
-    return response.data;
+    return response;
   },
 
   // Create new user
   createUser: async (user: Omit<User, 'id'>): Promise<User> => {
     const response = await http.post<User>('/users', user);
-    return response.data;
+    return response;
   },
 
   // Update user
   updateUser: async (id: number, user: Partial<User>): Promise<User> => {
     const response = await http.put<User>(`/users/${id}`, user);
-    return response.data;
+    return response;
   },
 
   // Delete user

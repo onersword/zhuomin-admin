@@ -12,7 +12,7 @@ export interface Product {
 export const productApi = {
   // Get all products
   getProducts: async (): Promise<Product[]> => {
-    const response = await http.get<Product[]>('/products');
-    return response.data;
+    const response = await http.get<Product[]>('/api/products');
+    return response;
   },
 }; 

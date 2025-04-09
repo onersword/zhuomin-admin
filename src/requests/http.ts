@@ -1,18 +1,15 @@
+import { addToast } from '@heroui/react';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { useAuthStore } from '@/store/auth';
 
 // HTTP response interface
-interface ApiResponse<T = any> {
-  code: number;
-  data: T;
-  message: string;
-}
-
+type ApiResponse<T = any> = T
 class Http {
   private instance: AxiosInstance;
 
   constructor() {
     this.instance = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+      baseURL: import.meta.env.VITE_API_BASE_URL || '',
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
@@ -26,8 +23,8 @@ class Http {
     // Request interceptor
     this.instance.interceptors.request.use(
       (config) => {
-        // Add token if exists
-        const token = localStorage.getItem('token');
+        // Get token from store
+        const token = useAuthStore.getState().token;
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -45,9 +42,15 @@ class Http {
       },
       (error) => {
         // Handle error globally
+        console.log('http error', error);
         if (error.response) {
           switch (error.response.status) {
             case 401:
+              addToast({
+                description: error.response.data.error,
+                variant: 'flat',
+                color: 'danger',
+              });
               // Handle unauthorized
               break;
             case 403:
