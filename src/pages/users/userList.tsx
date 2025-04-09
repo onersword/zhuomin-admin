@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { User, userApi } from "@/requests/user";
 import { Button, Pagination, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@heroui/react";
 import { usePagination } from "@/hooks/usePagination";
+import { useNavigate } from "react-router-dom";
 
 
 const columns = [
@@ -30,7 +31,7 @@ const columns = [
 export default function UserList() {
   const [users, setUsers] = useState<User[]>([]);
   const rowsPerPage = 20;
-
+  const navigate = useNavigate();
   const {
     currentPage,
     setCurrentPage,
@@ -85,7 +86,7 @@ export default function UserList() {
             {columns.map((column) => (
               <TableCell key={column.key}>
                 {column.key === "actions" ? (
-                  <Button color="primary">
+                  <Button color="primary" onPress={() => navigate(`/users/${item.id}`)}>
                     管理
                   </Button>
                 ) : (

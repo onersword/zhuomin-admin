@@ -42,6 +42,7 @@ GET /api/users
 [
   {
     "id": "用户 ID",
+    "fid": "档案号",
     "name": "用户姓名",
     "phoneNumber": "手机号码",
     "wechatId": "微信 ID",
@@ -95,7 +96,22 @@ GET /api/users/{userId}/reminders
 ]
 ```
 
-### 获取用户笔记
+### 添加用户提醒
+
+```
+POST /api/users/{userId}/reminders
+```
+
+请求体:
+```json
+{
+  "title": "提醒标题",
+  "description": "提醒描述",
+  "remindAt": "提醒时间"
+}
+```
+
+### 获取用户小结
 
 ```
 GET /api/users/{userId}/notes
@@ -113,6 +129,33 @@ GET /api/users/{userId}/notes
   }
 ]
 ```
+
+### 添加用户小结
+
+```
+POST /api/users/{userId}/notes
+```
+
+请求体:
+```json
+{
+  "content": "小结内容"
+}
+```
+
+### 更新用户小结
+
+```
+PATCH /api/users/{userId}/notes/{noteId}
+```
+
+请求体:
+```json
+{
+  "content": "小结内容"
+}
+```
+
 
 ### 获取用户产品
 
@@ -135,6 +178,19 @@ GET /api/users/{userId}/products
   }
 ]
 ```
+
+### 添加用户产品
+
+```
+POST /api/users/{userId}/products
+```
+
+请求体:
+```json
+{
+  "productId": "产品 ID"
+}
+``` 
 
 ## 产品接口
 
@@ -160,6 +216,26 @@ GET /api/products
 ]
 ```
 
+### 更新产品状态
+
+```
+PATCH /api/products/{productId}
+``` 
+
+请求体:
+```json 
+{
+  "status": 0 // 0-下架，1-上架
+}
+``` 
+
+响应:
+```json
+{
+  "id": "产品 ID",
+  "status": 0 // 0-下架，1-上架
+}
+``` 
 ## 记录接口
 
 ### 创建记录

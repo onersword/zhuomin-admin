@@ -7,16 +7,21 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className=" bg-white relative flex flex-col h-screen mx-auto max-w-7xl">
-      <Header />
-      <div className="w-[200px] bg-default-600 text-white bottom-0 absolute left-0 top-16 z-[2]">
+    <div className="bg-white h-screen overflow-hidden">
+      {/* Fixed header */}
+      <div className="fixed top-0 left-0 right-0 z-10">
+        <Header />
+      </div>
+      
+      {/* Fixed sidebar */}
+      <div className="fixed top-16 left-0 w-[200px] h-[calc(100vh-64px)] bg-default-600 text-white z-[2]">
         <Sidebar />
       </div>
-      <div className="relative">
-        <main className="ml-[200px]  p-[30px] flex-grow  border border-red-500">
-          {children}
-        </main>
-      </div>
+      
+      {/* Scrollable main content */}
+      <main className="ml-[200px] mt-16 h-[calc(100vh-64px)] overflow-auto p-[30px]">
+        {children}
+      </main>
     </div>
   );
 }

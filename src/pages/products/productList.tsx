@@ -1,5 +1,7 @@
 import { usePagination } from "@/hooks/usePagination";
 import { Product, productApi } from "@/requests/product";
+import { ProductStatus } from "@/types/product";
+import moment from "moment";
 import {
   getKeyValue,
   Table,
@@ -11,31 +13,35 @@ import {
   Button,
   Pagination,
 } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const columns = [
   {
     label: "产品名称",
     key: "name",
-    width: null,
+    width: 200,
   },
   {
     label: "产品价格",
     key: "price",
-    width: null,
+    align: "end",
+    width: 150,
   },
   {
-    label: "操作",
+    label: "更新时间",
+    key: "updatedAt",
+    align: "end",
+    width: 200,
+  },
+  {
+    label: "",
+    align: "end",
     width: 200,
     key: "actions",
   },
 ];
 
-export default function ProductList({
-  status,
-}: {
-  status: "online" | "offline";
-}) {
+export default function ProductList({ status }: { status: ProductStatus }) {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
@@ -44,22 +50,69 @@ export default function ProductList({
       pageSize: 10,
     });
 
-  useEffect(() => {
+  const changeStatus = (id: number) => {
+    let tempStatus = status;
+    if (status === ProductStatus.ONLINE) {
+      tempStatus = ProductStatus.OFFLINE;
+    } else {
+      tempStatus = ProductStatus.ONLINE;
+    }
+    productApi.changeStatus(id, tempStatus).then(() => {
+      getList();
+    });
+  };
+
+  const getList = () => {
     setLoading(true);
+    console.log("status", status);
     productApi.getProducts().then((res: Product[]) => {
       console.log("product list", res);
-      if (res) {
-        setProducts(res);
+
+      if (res.length) {
+        setProducts(res.filter((item) => item.status === status));
       }
       setLoading(false);
     });
+  };
+
+  const renderCell = useCallback((product: Product, columnKey: string) => {
+    const cellValue = getKeyValue(product, columnKey);
+
+    switch (columnKey) {
+      case "updatedAt":
+        return <div>{moment(cellValue).format("YYYY-MM-DD HH:mm:ss")}</div>;
+      case "actions":
+        return (
+          <div className="flex gap-2 justify-end">
+            <Button color="primary" size="sm" onPress={() => changeStatus(product.id)}>
+              {status === ProductStatus.ONLINE ? "下架" : "上架"}
+            </Button>
+            <Button color="primary" size="sm">更改价格</Button>
+          </div>
+        );
+        case "price":
+          return (
+            <div>
+              {new Intl.NumberFormat().format(cellValue)} 元
+
+            </div>
+          )
+
+      default:
+        return <div>{cellValue}</div>;
+    }
   }, []);
+
+  useEffect(() => {
+    getList();
+  }, [status]);
+
   return (
     <Table
       aria-label="Example table with client side pagination"
       bottomContent={
         <div className="flex w-full justify-center">
-          {!loading && (
+          {!loading && products.length > 0 && (
             <Pagination
               isCompact
               showControls
@@ -78,7 +131,7 @@ export default function ProductList({
     >
       <TableHeader>
         {columns.map((column) => (
-          <TableColumn key={column.key} width={column.width}>
+          <TableColumn key={column.key} width={column.width} align={column.align ?? 'start' as any}>
             {column.label}
           </TableColumn>
         ))}
@@ -90,18 +143,9 @@ export default function ProductList({
       >
         {(item: Product) => (
           <TableRow key={item.id}>
-            {columns.map((column) => (
-              <TableCell key={column.key}>
-                {column.key === "actions" ? (
-                  <div className="flex gap-2">
-                    <Button color="primary">下架</Button>
-                    <Button color="primary">更改价格</Button>
-                  </div>
-                ) : (
-                  getKeyValue(item, column.key as keyof Product)
-                )}
-              </TableCell>
-            ))}
+            {(columnKey) => (
+              <TableCell>{renderCell(item, columnKey as any)}</TableCell>
+            )}
           </TableRow>
         )}
       </TableBody>

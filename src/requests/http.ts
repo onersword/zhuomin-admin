@@ -85,6 +85,9 @@ class Http {
   public async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     return this.instance.delete(url, config);
   }
+  public async patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.instance.patch(url, data, config);
+  }
 }
 
 // Export a singleton instance
