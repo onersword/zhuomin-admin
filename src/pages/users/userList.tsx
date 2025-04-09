@@ -1,17 +1,7 @@
-import React, { useEffect } from "react";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  getKeyValue,
-} from "@heroui/table";
-import { Pagination } from "@heroui/pagination";
+import { useEffect, useState } from "react";
 import { User, userApi } from "@/requests/user";
+import { Button, Pagination, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@heroui/react";
 import { usePagination } from "@/hooks/usePagination";
-import { Button } from "@heroui/button";
 
 
 const columns = [
@@ -38,7 +28,7 @@ const columns = [
 ];
 
 export default function UserList() {
-  const [users, setUsers] = React.useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const rowsPerPage = 4;
 
   const {

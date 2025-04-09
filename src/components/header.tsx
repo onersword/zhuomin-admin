@@ -1,4 +1,4 @@
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 export const Header = () => {
   return (
     <div className="h-16 bg-[#4A3AFF]  w-full flex justify-between items-center px-5 z-[5]">

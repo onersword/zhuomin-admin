@@ -1,8 +1,5 @@
 import { usePagination } from "@/hooks/usePagination";
 import { Product, productApi } from "@/requests/product";
-import { User } from "@/requests/user";
-import { Button } from "@heroui/button";
-import { Pagination } from "@heroui/pagination";
 import {
   getKeyValue,
   Table,
@@ -11,7 +8,9 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@heroui/table";
+  Button,
+  Pagination,
+} from "@heroui/react";
 import { useEffect, useState } from "react";
 
 const columns = [

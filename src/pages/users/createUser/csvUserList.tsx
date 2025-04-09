@@ -5,10 +5,12 @@ import {
   TableRow,
   TableBody,
   Table,
-} from "@heroui/table";
-import { Button } from "@heroui/button";
-import { Pagination } from "@heroui/pagination";
+  Button,
+  Pagination,
+} from "@heroui/react";
 import { usePagination } from "@/hooks/usePagination";
+import { useState } from "react";
+import { UserInfo } from "./userInfo";
 
 const columns = [
   {
@@ -16,12 +18,12 @@ const columns = [
     label: "档案编号",
   },
   {
-    key: '姓名',
-    label: '姓名',
+    key: "姓名",
+    label: "姓名",
   },
   {
-    key: '电话',
-    label: '电话'
+    key: "电话",
+    label: "电话",
   },
 
   {
@@ -34,52 +36,69 @@ export default function CsvUserList({
 }: {
   userList: Record<string, any>[];
 }) {
+  const [currentUserInfo, setCurrenUserInfo] = useState<
+    Record<string, any> | undefined
+  >();
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
   console.log("user list", userList);
+  const onReview = (userInfo: Record<string, any>) => {
+    setCurrenUserInfo(userInfo);
+    setOpenDialog(true);
+  };
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
       data: userList,
       pageSize: 10,
     });
   return (
-    <Table
-      aria-label="Example table with client side pagination"
-      bottomContent={
-        <div className="flex w-full justify-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="primary"
-            page={currentPage}
-            total={totalPages}
-            onChange={(page: number) => setCurrentPage(page)}
-          />
-        </div>
-      }
-      classNames={{
-        wrapper: "min-h-[222px]",
-      }}
-    >
-      <TableHeader>
-        {columns.map((column) => (
-          <TableColumn key={column.key}>{column.label}</TableColumn>
-        ))}
-      </TableHeader>
-      <TableBody items={currentPageData}>
-        {(item: any) => (
-          <TableRow key={item["编号"]}>
-            {columns.map((column) => (
-              <TableCell key={column.key}>
-                {column.key === "handle" ? (
-                  <Button color="primary">审核</Button>
-                ) : (
-                  item[column.key]
-                )}
-              </TableCell>
-            ))}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table
+        aria-label="Example table with client side pagination"
+        bottomContent={
+          <div className="flex w-full justify-center">
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              color="primary"
+              page={currentPage}
+              total={totalPages}
+              onChange={(page: number) => setCurrentPage(page)}
+            />
+          </div>
+        }
+        classNames={{
+          wrapper: "min-h-[222px]",
+        }}
+      >
+        <TableHeader>
+          {columns.map((column) => (
+            <TableColumn key={column.key}>{column.label}</TableColumn>
+          ))}
+        </TableHeader>
+        <TableBody items={currentPageData}>
+          {(item: any) => (
+            <TableRow key={item["编号"]}>
+              {columns.map((column) => (
+                <TableCell key={column.key}>
+                  {column.key === "handle" ? (
+                    <Button color="primary" onPress={() => onReview(item)}>
+                      审核
+                    </Button>
+                  ) : (
+                    item[column.key]
+                  )}
+                </TableCell>
+              ))}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <UserInfo
+        userInfo={currentUserInfo}
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+      />
+    </>
   );
 }

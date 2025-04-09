@@ -1,8 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocation} from "react-router-dom";
-import { Link } from "@heroui/link";
-import { cn } from "@heroui/theme";
+import { Link, cn } from "@heroui/react";
 // Define menu items
 const menuItems = [
   {

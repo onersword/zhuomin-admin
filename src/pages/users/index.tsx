@@ -1,8 +1,6 @@
 import DefaultLayout from "@/layouts/default";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import UserList from "./userList";
-import { useEffect } from "react";
-import { userApi } from "@/requests/user";
 import { useNavigate } from "react-router-dom";
 export default function UsersPage() {
   const navigate = useNavigate();
