@@ -50,4 +50,14 @@ export const userApi = {
     const response = await http.delete<any>(`/api/users/${userId}/notes/${noteId}`);
     return response;
   },
+
+  // Get user reminders
+  getUserReminders: (userId: string) => {
+    return http.get(`/api/users/${userId}/reminders`);
+  },
+
+  // Create user reminder
+  createUserReminder: (userId: string, data: { title: string; description: string; remindAt: string }) => {
+    return http.post(`/api/users/${userId}/reminders`, data);
+  },
 };

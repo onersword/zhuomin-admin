@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductList from "./productList";
 import Notes from "./notes";
+import Reminds from "./reminds";
+import Files from "./files";
 
 export default function UserInfoPage() {
   const { id: userId } = useParams();
@@ -67,6 +69,8 @@ export default function UserInfoPage() {
             </Tabs>
             {activeTab === "products" && <ProductList userId={userId} />}
             {activeTab === "notes" && <Notes userId={userId} />}
+            {activeTab === "files" && <Files userId={userId} />}
+            {activeTab === "reminds" && <Reminds userId={userId} />}
           </div>
         </div>
       </div>
