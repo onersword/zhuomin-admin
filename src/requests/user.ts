@@ -60,4 +60,10 @@ export const userApi = {
   createUserReminder: (userId: string, data: { title: string; description: string; remindAt: string }) => {
     return http.post(`/api/users/${userId}/reminders`, data);
   },
+
+  // Get user files
+  getUserFiles: async (userId: string): Promise<any> => {
+    const response = await http.get<any>(`/api/users/${userId}/files`);
+    return response;
+  },
 };
