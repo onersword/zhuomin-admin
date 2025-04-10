@@ -12,7 +12,7 @@ interface BreadcrumbProps {
 
 export default function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav className="flex items-center text-sm text-gray-500">
+    <nav className="flex items-center text-sm text-gray-500 py-2">
       {items.map((item, index) => (
         <div key={item.path}>
           <Link
