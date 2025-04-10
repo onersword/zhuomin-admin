@@ -10,7 +10,7 @@ import {
 } from "@heroui/react";
 import { usePagination } from "@/hooks/usePagination";
 import { useState } from "react";
-import { UserInfo } from "./userInfo";
+import UserInfo from "./userInfo";
 
 const columns = [
   {
@@ -94,11 +94,7 @@ export default function CsvUserList({
           )}
         </TableBody>
       </Table>
-      <UserInfo
-        userInfo={currentUserInfo}
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-      />
+      <UserInfo userInfo={currentUserInfo} />
     </>
   );
 }
