@@ -13,13 +13,7 @@ import {
   Button,
   Pagination,
   addToast,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Input,
   useDisclosure,
-  ModalFooter,
 } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
 import ChangePriceModal from "./components/ChangePriceModal";

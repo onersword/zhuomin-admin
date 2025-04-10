@@ -1,14 +1,24 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { User, userApi } from "@/requests/user";
-import { Button, Pagination, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@heroui/react";
+import {
+  Button,
+  Pagination,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  getKeyValue,
+} from "@heroui/react";
 import { usePagination } from "@/hooks/usePagination";
 import { useNavigate } from "react-router-dom";
-
+import moment from "moment";
 
 const columns = [
   {
     label: "档案编号",
-    key: "documentId",
+    key: "fid",
   },
   {
     label: "姓名",
@@ -32,22 +42,36 @@ export default function UserList() {
   const [users, setUsers] = useState<User[]>([]);
   const rowsPerPage = 20;
   const navigate = useNavigate();
-  const {
-    currentPage,
-    setCurrentPage,
-    currentPageData,
-    totalPages,
-  } = usePagination({
-    data: users,
-    pageSize: rowsPerPage,
-  });
+  const { currentPage, setCurrentPage, currentPageData, totalPages } =
+    usePagination({
+      data: users,
+      pageSize: rowsPerPage,
+    });
+
+  const renderCell = useCallback((user: User, columnKey: string) => {
+    const cellValue = getKeyValue(user, columnKey);
+
+    switch (columnKey) {
+      case "createdAt":
+        return moment(cellValue).format("YYYY-MM-DD HH:mm:ss");
+      case "actions":
+        return (
+          <Button color="primary" size="sm" onPress={() => navigate(`/users/${user.id}`)}>
+            管理
+          </Button>
+        );
+      default:
+        return <div>{cellValue}</div>;
+    }
+  }, []);
+
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
     userApi.getUsers().then((res: User[]) => {
       console.log("user list", res);
       if (res.length) {
-        setUsers(res.filter((item) => item.status === 2))
+        setUsers(res.filter((item) => item.status === 2));
       }
       setLoading(false);
     });
@@ -83,17 +107,11 @@ export default function UserList() {
       <TableBody items={currentPageData}>
         {(item: User) => (
           <TableRow key={item.id}>
-            {columns.map((column) => (
-              <TableCell key={column.key}>
-                {column.key === "actions" ? (
-                  <Button color="primary" onPress={() => navigate(`/users/${item.id}`)}>
-                    管理
-                  </Button>
-                ) : (
-                  getKeyValue(item, column.key as keyof User)
-                )}
+            {(columnKey) => (
+              <TableCell key={columnKey}>
+                {renderCell(item, columnKey as any)}
               </TableCell>
-            ))}
+            )}
           </TableRow>
         )}
       </TableBody>
