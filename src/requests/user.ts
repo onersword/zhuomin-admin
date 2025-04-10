@@ -26,20 +26,8 @@ export const userApi = {
     return response;
   },
 
-  // Create new user
-  createUser: async (user: Omit<User, 'id'>): Promise<User> => {
-    const response = await http.post<User>('/users', user);
+  getUserProducts: async (id: string): Promise<any> => {
+    const response = await http.get<any>(`/api/users/${id}/products`);
     return response;
   },
-
-  // Update user
-  updateUser: async (id: number, user: Partial<User>): Promise<User> => {
-    const response = await http.put<User>(`/users/${id}`, user);
-    return response;
-  },
-
-  // Delete user
-  deleteUser: async (id: number): Promise<void> => {
-    await http.delete(`/users/${id}`);
-  }
 };

@@ -3,9 +3,16 @@ import { NumberIcon, PhoneIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
 import { Button, Tab, Tabs } from "@heroui/react";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import ProductList from "./productList";
 
 export default function UserInfoPage() {
+  const { id: userId } = useParams();
   const [activeTab, setActiveTab] = useState<string>("products");
+  
+  // 使用 userId 进行数据获取等操作
+  console.log('Current userId:', userId);
+  
   return (
     <DefaultLayout>
       <div>
@@ -47,6 +54,7 @@ export default function UserInfoPage() {
 
           <div className="mt-5">
             <Tabs
+            className="pb-5"
               variant="underlined"
               selectedKey={activeTab}
               onSelectionChange={(key) => setActiveTab(key as string)}
@@ -56,6 +64,7 @@ export default function UserInfoPage() {
               <Tab key="files" title="体检报告"/>
               <Tab key="reminds" title="预约管理"/>
             </Tabs>
+            {activeTab === "products" && <ProductList userId={userId} />}
           </div>
         </div>
       </div>
