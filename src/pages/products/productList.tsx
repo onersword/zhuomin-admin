@@ -12,8 +12,17 @@ import {
   TableRow,
   Button,
   Pagination,
+  addToast,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  Input,
+  useDisclosure,
+  ModalFooter,
 } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
+import ChangePriceModal from "./components/ChangePriceModal";
 
 const columns = [
   {
@@ -44,6 +53,8 @@ const columns = [
 export default function ProductList({ status }: { status: ProductStatus }) {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const { isOpen, onOpen, onOpenChange} = useDisclosure();
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
       data: products,
@@ -57,9 +68,34 @@ export default function ProductList({ status }: { status: ProductStatus }) {
     } else {
       tempStatus = ProductStatus.ONLINE;
     }
+
     productApi.changeStatus(id, tempStatus).then(() => {
+      const text = tempStatus === ProductStatus.ONLINE ? "上架" : "下架";
+      addToast({
+        title: "操作成功",
+        description: `产品${text}成功`,
+        color: "success",
+      });
       getList();
     });
+  };
+
+  const changePrice = (product: Product) => {
+    setSelectedProduct(product);
+    onOpen();
+  };
+
+  const handlePriceChange = (newPrice: number) => {
+    if (selectedProduct) {
+      productApi.updatePrice(selectedProduct.id, newPrice).then(() => {
+        addToast({
+          title: "操作成功",
+          description: "价格更新成功",
+          color: "success",
+        });
+        getList();
+      });
+    }
   };
 
   const getList = () => {
@@ -75,80 +111,110 @@ export default function ProductList({ status }: { status: ProductStatus }) {
     });
   };
 
-  const renderCell = useCallback((product: Product, columnKey: string) => {
-    const cellValue = getKeyValue(product, columnKey);
+  const renderCell = useCallback(
+    (product: Product, columnKey: string) => {
+      const cellValue = getKeyValue(product, columnKey);
 
-    switch (columnKey) {
-      case "updatedAt":
-        return <div>{moment(cellValue).format("YYYY-MM-DD HH:mm:ss")}</div>;
-      case "actions":
-        return (
-          <div className="flex gap-2 justify-end">
-            <Button color="primary" size="sm" onPress={() => changeStatus(product.id)}>
-              {status === ProductStatus.ONLINE ? "下架" : "上架"}
-            </Button>
-            <Button color="primary" size="sm">更改价格</Button>
-          </div>
-        );
+      switch (columnKey) {
+        case "updatedAt":
+          return (
+            <div className="tabular-nums">
+              {moment(cellValue).format("YYYY-MM-DD HH:mm:ss")}
+            </div>
+          );
+        case "actions":
+          return (
+            <div className="flex gap-2 justify-end">
+              <Button
+                color="primary"
+                size="sm"
+                onPress={() => changeStatus(product.id)}
+              >
+                {status === ProductStatus.ONLINE ? "下架" : "上架"}
+              </Button>
+              <Button
+                color="primary"
+                size="sm"
+                onPress={() => changePrice(product)}
+              >
+                更改价格
+              </Button>
+            </div>
+          );
         case "price":
           return (
-            <div>
+            <div className="tabular-nums">
               {new Intl.NumberFormat().format(cellValue)} 元
-
             </div>
-          )
+          );
 
-      default:
-        return <div>{cellValue}</div>;
-    }
-  }, []);
+        default:
+          return <div>{cellValue}</div>;
+      }
+    },
+    [status]
+  );
 
   useEffect(() => {
     getList();
   }, [status]);
 
   return (
-    <Table
-      aria-label="Example table with client side pagination"
-      bottomContent={
-        <div className="flex w-full justify-center">
-          {!loading && products.length > 0 && (
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              color="primary"
-              page={currentPage}
-              total={totalPages}
-              onChange={(page: number) => setCurrentPage(page)}
-            />
-          )}
-        </div>
-      }
-      classNames={{
-        wrapper: "min-h-[222px]",
-      }}
-    >
-      <TableHeader>
-        {columns.map((column) => (
-          <TableColumn key={column.key} width={column.width} align={column.align ?? 'start' as any}>
-            {column.label}
-          </TableColumn>
-        ))}
-      </TableHeader>
-      <TableBody
-        items={currentPageData}
-        isLoading={loading}
-        emptyContent="暂无数据"
-      >
-        {(item: Product) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey as any)}</TableCell>
+    <>
+      <Table
+        aria-label="Example table with client side pagination"
+        bottomContent={
+          <div className="flex w-full justify-center">
+            {!loading && products.length > 0 && (
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="primary"
+                page={currentPage}
+                total={totalPages}
+                onChange={(page: number) => setCurrentPage(page)}
+              />
             )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+          </div>
+        }
+        classNames={{
+          wrapper: "min-h-[222px]",
+        }}
+      >
+        <TableHeader>
+          {columns.map((column) => (
+            <TableColumn
+              key={column.key}
+              width={column.width}
+              align={column.align ?? ("start" as any)}
+            >
+              {column.label}
+            </TableColumn>
+          ))}
+        </TableHeader>
+        <TableBody
+          items={currentPageData}
+          isLoading={loading}
+          emptyContent="暂无数据"
+        >
+          {(item: Product) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey as any)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      {selectedProduct && (
+        <ChangePriceModal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          onConfirm={handlePriceChange}
+          oldPrice={selectedProduct.price}
+        />
+      )}
+    </>
   );
 }

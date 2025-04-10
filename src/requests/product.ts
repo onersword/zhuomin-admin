@@ -23,4 +23,10 @@ export const productApi = {
     });
     return response;
   },
+  updatePrice: async (id: number, price: number) => {
+    const response = await http.patch(`/api/products/${id}`, {
+      price,
+    });
+    return response;
+  },
 }; 
