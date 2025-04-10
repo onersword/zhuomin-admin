@@ -36,6 +36,11 @@ export const userApi = {
     return response;
   },
 
+  createUserNote: async (userId: string, data: { content: string }): Promise<any> => {
+    const response = await http.post<any>(`/api/users/${userId}/notes`, data);
+    return response;
+  },
+
   updateUserNote: async (userId: string, noteId: string, data: { content: string }): Promise<any> => {
     const response = await http.patch<any>(`/api/users/${userId}/notes/${noteId}`, data);
     return response;

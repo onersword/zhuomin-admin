@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from "react";
 import ViewNoteModal from "./components/ViewNoteModal";
 import EditNoteModal from "./components/EditNoteModal";
 import DeleteNoteModal from "./components/DeleteNoteModal";
+import AddNoteModal from "./components/AddNoteModal";
 
 const columns = [
   {
@@ -43,6 +44,7 @@ export default function Notes({ userId }: { userId: string }) {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
@@ -66,6 +68,15 @@ export default function Notes({ userId }: { userId: string }) {
       getNotes();
     } catch (error) {
       console.error('Failed to delete note:', error);
+    }
+  };
+
+  const handleAddNote = async (content: string) => {
+    try {
+      await userApi.createUserNote(userId, { content });
+      getNotes();
+    } catch (error) {
+      console.error('Failed to create note:', error);
     }
   };
 
@@ -133,6 +144,17 @@ export default function Notes({ userId }: { userId: string }) {
     <>
       <Table
         aria-label="Example table with client side pagination"
+        topContent={
+          <div className="flex w-full justify-start">
+            <Button 
+              color="primary" 
+              size="sm" 
+              onPress={() => setAddModalOpen(true)}
+            >
+              添加健康小结
+            </Button>
+          </div>
+        }
         bottomContent={
           <div className="flex w-full justify-center">
             {!loading && notes.length > 0 && (
@@ -198,6 +220,12 @@ export default function Notes({ userId }: { userId: string }) {
           />
         </>
       )}
+
+      <AddNoteModal
+        isOpen={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        onConfirm={handleAddNote}
+      />
     </>
   );
 }
