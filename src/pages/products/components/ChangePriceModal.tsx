@@ -44,7 +44,7 @@ export default function ChangePriceModal({
               />
             </ModalBody>
             <ModalFooter>
-              <Button color="primary" onPress={onClose}>
+              <Button color="danger" onPress={onClose}>
                 取消
               </Button>
               <Button color="primary" onPress={handleConfirm}>
