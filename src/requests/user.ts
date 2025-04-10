@@ -30,4 +30,19 @@ export const userApi = {
     const response = await http.get<any>(`/api/users/${id}/products`);
     return response;
   },
+
+  getUserNotes: async (id: string): Promise<any> => {
+    const response = await http.get<any>(`/api/users/${id}/notes`);
+    return response;
+  },
+
+  updateUserNote: async (userId: string, noteId: string, data: { content: string }): Promise<any> => {
+    const response = await http.patch<any>(`/api/users/${userId}/notes/${noteId}`, data);
+    return response;
+  },
+
+  deleteUserNote: async (userId: string, noteId: string): Promise<any> => {
+    const response = await http.delete<any>(`/api/users/${userId}/notes/${noteId}`);
+    return response;
+  },
 };

@@ -5,13 +5,14 @@ import { Button, Tab, Tabs } from "@heroui/react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductList from "./productList";
+import Notes from "./notes";
 
 export default function UserInfoPage() {
   const { id: userId } = useParams();
-  const [activeTab, setActiveTab] = useState<string>("products");
-  
-  // 使用 userId 进行数据获取等操作
-  console.log('Current userId:', userId);
+  const [activeTab, setActiveTab] = useState<string>("notes");
+  if (!userId) {
+    return <div>用户ID不存在</div>;
+  }
   
   return (
     <DefaultLayout>
@@ -65,6 +66,7 @@ export default function UserInfoPage() {
               <Tab key="reminds" title="预约管理"/>
             </Tabs>
             {activeTab === "products" && <ProductList userId={userId} />}
+            {activeTab === "notes" && <Notes userId={userId} />}
           </div>
         </div>
       </div>
