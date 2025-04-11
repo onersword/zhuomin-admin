@@ -61,6 +61,12 @@ export const userApi = {
     return http.post(`/api/users/${userId}/reminders`, data);
   },
 
+  // Delete user reminder
+  deleteUserReminder: async (reminderId: string): Promise<any> => {
+    const response = await http.delete<any>(`/api/reminders/${reminderId}`);
+    return response;
+  },
+
   // Get user files
   getUserFiles: async (userId: string): Promise<any> => {
     const response = await http.get<any>(`/api/users/${userId}/files`);

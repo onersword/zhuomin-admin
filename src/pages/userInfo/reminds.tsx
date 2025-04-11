@@ -8,11 +8,13 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  addToast,
 } from "@heroui/react";
 import { Table } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import AddRemindModal from "./components/AddRemindModal";
+import DeleteRemindModal from "./components/DeleteRemindModal";
 
 const columns = [
   {
@@ -37,12 +39,20 @@ const columns = [
     width: 200,
     align: "end" as const,
   },
+  {
+    label: "操作",
+    key: "actions",
+    width: 200,
+    align: "end" as const,
+  },
 ];
 
 export default function Reminds({ userId }: { userId: string }) {
   const [reminds, setReminds] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedRemind, setSelectedRemind] = useState<any>(null);
 
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
@@ -58,6 +68,24 @@ export default function Reminds({ userId }: { userId: string }) {
       getReminds();
     } catch (error) {
       console.error('Failed to create reminder:', error);
+    }
+  };
+
+  const handleDeleteRemind = async () => {
+    if (!selectedRemind) return;
+    try {
+      await userApi.deleteUserReminder(selectedRemind.id);
+      addToast({
+        title: '成功',
+        description: '提醒删除成功',
+        color: 'success',
+      });
+      getReminds();
+    } catch (error) {
+      addToast({
+        title: '错误',
+        description: '提醒删除失败',
+      });
     }
   };
 
@@ -77,6 +105,21 @@ export default function Reminds({ userId }: { userId: string }) {
         return (
           <div className="tabular-nums">
             {moment(item.updatedAt).format("YYYY-MM-DD HH:mm:ss")}
+          </div>
+        );
+      case "actions":
+        return (
+          <div className="flex gap-2 justify-end">
+            <Button 
+              color="danger" 
+              size="sm" 
+              onPress={() => {
+                setSelectedRemind(item);
+                setDeleteModalOpen(true);
+              }}
+            >
+              删除
+            </Button>
           </div>
         );
     }
@@ -158,6 +201,12 @@ export default function Reminds({ userId }: { userId: string }) {
         isOpen={addModalOpen}
         onOpenChange={setAddModalOpen}
         onConfirm={handleAddRemind}
+      />
+
+      <DeleteRemindModal
+        isOpen={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        onConfirm={handleDeleteRemind}
       />
     </>
   );
