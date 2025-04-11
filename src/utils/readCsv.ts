@@ -2,6 +2,12 @@ import iconv from 'iconv-lite';
 import Papa from 'papaparse';
 import { Buffer } from 'buffer';
 
+const excludeFileds = [
+  'IP', 'Referrer', 'UA',
+  '地理位置国家和地区', '地理位置市', '地理位置省', '家庭地址(经度，纬度)',
+  '昵称',
+  '开始答题时间', '清洗数据结果', '用户标识', '用户类型','结束答题时间', '编号', '自定义字段',
+]
 
 /**
  * Parse CSV file content into an array of objects
@@ -28,7 +34,7 @@ export const readCsv = async (file: File): Promise<Record<string, string>[]> => 
             console.log('解析结果:', processedData);
             const cleanedData = cleanData(processedData);
             console.log('清洗结果:', cleanedData);
-            resolve(cleanedData);
+            resolve(cleanedData as any);
           },
           error: function (error: any) {
             console.error('解析出错:', error);
@@ -197,7 +203,7 @@ function cleanData(data: Record<string, any>[]) {
         .trim(); // 移除首尾空格
       if (cleanTitle === '姓名') {
         userInfo.name = cleanValue;
-      } 
+      }
       if (cleanTitle === '电话') {
         userInfo.phoneNumber = cleanValue;
       }
@@ -206,6 +212,9 @@ function cleanData(data: Record<string, any>[]) {
       }
       if (cleanTitle === '健康档案') {
         userInfo.forms = cleanValue;
+      }
+      if (excludeFileds.includes(cleanTitle)) {
+        return acc;
       }
       acc[cleanTitle] = cleanValue;
       return acc;

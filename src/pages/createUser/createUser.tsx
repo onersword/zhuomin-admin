@@ -14,7 +14,7 @@ export default function CreateUser() {
 
     try {
       const data = await readCsv(file);
-      setParsedData(data);
+      setParsedData(data as unknown as CSVUser[]);
       console.log('CSV文件解析成功', data);
     } catch (error) {
       console.error('Error parsing CSV:', error);
