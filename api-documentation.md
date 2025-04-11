@@ -58,6 +58,34 @@ GET /api/users
 
 ## 用户相关资源
 
+### 获取用户
+
+```
+GET /api/users/{userId}
+```
+
+响应:
+
+```json
+{
+  "id": "用户 ID",
+  "fid": "档案号",
+  "name": "用户姓名",
+  "phoneNumber": "手机号码",
+  "wechatId": "微信 ID",
+  "status": 0,
+  "createdAt": "创建时间",
+  "updatedAt": "更新时间"
+}
+```
+
+### 删除用户
+
+```
+DELETE /api/users/{userId}
+```
+
+
 ### 获取用户报告
 
 ```
@@ -305,9 +333,29 @@ PATCH /api/products/{productId}
 }
 ```
 
-## 记录接口
+## 档案接口
 
-### 创建记录
+### 上传文件
+
+```
+POST /api/files
+```
+
+```
+curl --location 'http://localhost:3000/api/files' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzQ0NTE0NzYyfQ.8EK6xObqI7y9vHrOrdxptO46DRS8m5OmtGA6UvjBvMU' \
+--form 'file=@"/Users/pp/Downloads/体检报告20240213.pdf"'
+```
+
+响应:
+
+```json
+{
+  "fileid": "文件 ID",
+}
+```
+
+### 创建档案
 
 ```
 POST /api/records
@@ -317,12 +365,13 @@ POST /api/records
 
 ```json
 {
-  phoneNumber: xxx,
-  idCard: xxx,
+  "name": "姓名",
+  "phoneNumber": "手机号",
+  "idCard": "身份证号",
   "forms": {
     // 表单数据
   },
-  "pdfUrl": "PDF 文件 URL（可选）"
+  "pdfUrl": "👆 上传文件返回的 fileid"
 }
 ```
 

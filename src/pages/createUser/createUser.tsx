@@ -3,10 +3,10 @@ import Breadcrumb from "@/components/Breadcrumb";
 import { readCsv } from "@/utils/readCsv";
 import { useState } from "react";
 import CsvUserList from "./csvUserList";
-import TestPDF from "./testPDF";
+import { CSVUser } from "@/types/user";
 
 export default function CreateUser() {
-  const [parsedData, setParsedData] = useState<Record<string, string>[]>([]);
+  const [parsedData, setParsedData] = useState<CSVUser[]>([]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -42,7 +42,6 @@ export default function CreateUser() {
 
           
           {parsedData.length > 0 && <CsvUserList userList={parsedData} />}
-          <TestPDF />
         </div>
       </div>
     </DefaultLayout>

@@ -9,42 +9,84 @@ import {
   Pagination,
 } from "@heroui/react";
 import { usePagination } from "@/hooks/usePagination";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import UserInfoModal from "./userInfoModal";
+import { userApi } from "@/requests/user";
+import { CSVUser } from "@/types/user";
+
 
 const columns = [
   {
-    key: "档案编号",
-    label: "档案编号",
-  },
-  {
-    key: "姓名",
+    key: "name",
     label: "姓名",
   },
   {
-    key: "电话",
+    key: "phoneNumber",
     label: "电话",
   },
-
   {
-    key: "handle",
+    key: "idCard",
+    label: "身份证号/护照号",
+  },
+  {
+    key: "options",
     label: "操作",
+    align: "end" as const,
+    width: 150,
   },
 ];
-export default function CsvUserList({
-  userList,
-}: {
-  userList: Record<string, any>[];
-}) {
-  const [currentUserInfo, setCurrenUserInfo] = useState<
-    Record<string, any> | undefined
-  >();
+export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
+  const [currentUserInfo, setCurrenUserInfo] = useState<CSVUser | undefined>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   console.log("user list", userList);
-  const onReview = (userInfo: Record<string, any>) => {
+  const onReview = (userInfo: CSVUser) => {
     setCurrenUserInfo(userInfo);
     setIsOpen(true);
   };
+
+  const handleApprove = async (pdfBlob: Blob) => {
+    // 这里可以调用上传接口
+    console.log("PDF Blob:", pdfBlob);
+    // 例如：
+    const formData = new FormData();
+    formData.append("file", pdfBlob, "health_record.pdf");
+    try {
+      const res = await userApi.uploadFile(formData);
+      console.log("res", res);
+      const fileId = res.fileid;
+      const recordRes = await userApi.createRecord({
+        pdfUrl: fileId,
+        name: currentUserInfo?.name,
+        phone: currentUserInfo?.phoneNumber,
+        idCard: currentUserInfo?.idCard,
+        forms: currentUserInfo?.forms,
+      });
+      console.log("recordRes", recordRes);
+    } catch (error) {
+      console.error("上传失败", error);
+    }
+  };
+
+  const renderCell = useCallback((item: CSVUser, columnKey: string) => {
+    switch (columnKey) {
+      case "name":
+        return <div>{item.name}</div>;
+      case "phoneNumber":
+        return <div className="tabular-nums">{item.phoneNumber}</div>;
+      case "idCard":
+        return <div className="tabular-nums">{item.idCard}</div>;
+      case "options":
+        return (
+          <Button color="primary" size="sm" onPress={() => onReview(item)}>
+            审核
+          </Button>
+        );
+
+      default:
+        return <div />;
+    }
+  }, []);
+
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
       data: userList,
@@ -73,31 +115,32 @@ export default function CsvUserList({
       >
         <TableHeader>
           {columns.map((column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
+            <TableColumn
+              key={column.key}
+              width={column.width}
+              align={column.align ?? ("start" as const)}
+            >
+              {column.label}
+            </TableColumn>
           ))}
         </TableHeader>
         <TableBody items={currentPageData}>
-          {(item: any) => (
-            <TableRow key={item["编号"]}>
+          {(item: CSVUser) => (
+            <TableRow key={item.name}>
               {columns.map((column) => (
                 <TableCell key={column.key}>
-                  {column.key === "handle" ? (
-                    <Button color="primary" onPress={() => onReview(item)}>
-                      审核
-                    </Button>
-                  ) : (
-                    item[column.key]
-                  )}
+                  {renderCell(item, column.key)}
                 </TableCell>
               ))}
             </TableRow>
           )}
         </TableBody>
       </Table>
-      <UserInfoModal 
-        userInfo={currentUserInfo} 
+      <UserInfoModal
+        userInfo={currentUserInfo}
         isOpen={isOpen}
         onOpenChange={setIsOpen}
+        onApprove={handleApprove}
       />
     </>
   );

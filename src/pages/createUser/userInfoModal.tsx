@@ -13,15 +13,18 @@ import {
   View,
   StyleSheet,
   PDFViewer,
-  PDFDownloadLink,
+  BlobProvider,
   Font,
 } from "@react-pdf/renderer";
 import { useEffect, useState } from "react";
+
 interface UserInfoModalProps {
   userInfo: Record<string, any> | undefined;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onApprove?: (pdfBlob: Blob) => void;
 }
+
 // Register fallback font
 Font.register({
   family: "Noto Sans SC",
@@ -74,12 +77,23 @@ export default function UserInfoModal({
   userInfo,
   isOpen,
   onOpenChange,
+  onApprove,
 }: UserInfoModalProps) {
   const [height, setHeight] = useState<number>(500);
+  const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+
   useEffect(() => {
     const maxHeight = window.innerHeight * 0.8;
     setHeight(maxHeight);
-  }, [])
+  }, []);
+
+  const handleApprove = () => {
+    if (pdfBlob && onApprove) {
+      onApprove(pdfBlob);
+    }
+    onOpenChange(false);
+  };
+
   return (
     <Modal size="5xl" isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
@@ -90,8 +104,16 @@ export default function UserInfoModal({
               {userInfo && (
                 <div className="space-y-2">
                   <PDFViewer width="100%" height={height}>
-                    <MyDocument data={userInfo} />
+                    <MyDocument data={userInfo.forms} />
                   </PDFViewer>
+                  <BlobProvider document={<MyDocument data={userInfo.forms} />}>
+                    {({ blob }) => {
+                      if (blob) {
+                        setPdfBlob(blob);
+                      }
+                      return null;
+                    }}
+                  </BlobProvider>
                 </div>
               )}
             </ModalBody>
@@ -99,8 +121,13 @@ export default function UserInfoModal({
               <Button color="danger" onPress={onClose}>
                 关闭
               </Button>
-              
-              <Button color="primary" onPress={onClose}> 审核通过</Button>
+              <Button 
+                color="primary" 
+                onPress={handleApprove}
+                isDisabled={!pdfBlob}
+              >
+                审核通过
+              </Button>
             </ModalFooter>
           </>
         )}

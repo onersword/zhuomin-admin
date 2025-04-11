@@ -159,7 +159,13 @@ function processHeadersAndData(headers: string[], rows: any[]) {
 
 function cleanData(data: Record<string, any>[]) {
   return data.map(item => {
-    return Object.keys(item).reduce((acc, key) => {
+    const userInfo = {
+      name: '',
+      phoneNumber: '',
+      idCard: '',
+      forms: {}
+    }
+    userInfo.forms = Object.keys(item).reduce((acc, key) => {
       const title = key.trim();
       let cleanTitle = '';
       const match = title.match(/^(\d+)\.(.*)$/);
@@ -189,8 +195,21 @@ function cleanData(data: Record<string, any>[]) {
         .replace(/\n/g, '') // 移除换行符
         .replace(/\r/g, '') // 移除回车符
         .trim(); // 移除首尾空格
+      if (cleanTitle === '姓名') {
+        userInfo.name = cleanValue;
+      } 
+      if (cleanTitle === '电话') {
+        userInfo.phoneNumber = cleanValue;
+      }
+      if (cleanTitle === '身份证号/护照号') {
+        userInfo.idCard = cleanValue;
+      }
+      if (cleanTitle === '健康档案') {
+        userInfo.forms = cleanValue;
+      }
       acc[cleanTitle] = cleanValue;
       return acc;
     }, {} as Record<string, any>);
+    return userInfo;
   });
 }

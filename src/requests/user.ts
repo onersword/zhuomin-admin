@@ -82,4 +82,20 @@ export const userApi = {
     });
     return response;
   },
+  createRecord: async (data: any): Promise<any> => {
+    const response = await http.post<any>('/api/records', data);
+    return response;
+  },
+  uploadFile: async (formData: FormData): Promise<any> => {
+    const response = await http.post<any>('/api/files', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response;
+  },
+  deleteUser: async (userId: string): Promise<any> => {
+    const response = await http.delete<any>(`/api/users/${userId}`);
+    return response;
+  },
 };
