@@ -66,4 +66,14 @@ export const userApi = {
     const response = await http.get<any>(`/api/users/${userId}/files`);
     return response;
   },
+
+  // Upload user file
+  uploadUserFile: async (userId: string, formData: FormData): Promise<any> => {
+    const response = await http.post<any>(`/api/users/${userId}/files`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response;
+  },
 };

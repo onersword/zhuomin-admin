@@ -8,10 +8,12 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  addToast,
 } from "@heroui/react";
 import { Table } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
+import UploadFileModal from "./components/UploadFileModal";
 
 const columns = [
   {
@@ -38,6 +40,7 @@ export default function Files({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
@@ -80,6 +83,25 @@ export default function Files({ userId }: { userId: string }) {
     });
   };
 
+  const handleUploadFile = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      await userApi.uploadUserFile(userId, formData);
+      addToast({
+        title: '成功',
+        description: '文件上传成功',
+      });
+      getFiles(); // Refresh the file list
+    } catch (error) {
+      addToast({
+        title: '错误',
+        description: '文件上传失败',
+      });
+    }
+  };
+
   useEffect(() => {
     getFiles();
   }, []);
@@ -93,7 +115,7 @@ export default function Files({ userId }: { userId: string }) {
             <Button 
               color="primary" 
               size="sm" 
-              onPress={() => {}}
+              onPress={() => setUploadModalOpen(true)}
             >
               上传体检报告
             </Button>
@@ -144,6 +166,11 @@ export default function Files({ userId }: { userId: string }) {
         </TableBody>
       </Table>
 
+      <UploadFileModal
+        isOpen={uploadModalOpen}
+        onOpenChange={setUploadModalOpen}
+        onConfirm={handleUploadFile}
+      />
     </>
   );
 }

@@ -54,6 +54,7 @@ export default function Reminds({ userId }: { userId: string }) {
     try {
       console.log("data", data);
       await userApi.createUserReminder(userId, data);
+      setAddModalOpen(false);
       getReminds();
     } catch (error) {
       console.error('Failed to create reminder:', error);
