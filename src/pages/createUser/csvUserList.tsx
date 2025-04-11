@@ -57,7 +57,7 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
       const recordRes = await userApi.createRecord({
         pdfUrl: fileId,
         name: currentUserInfo?.name,
-        phone: currentUserInfo?.phoneNumber,
+        phoneNumber: currentUserInfo?.phoneNumber,
         idCard: currentUserInfo?.idCard,
         forms: currentUserInfo?.forms,
       });
