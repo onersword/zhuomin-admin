@@ -5,6 +5,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  addToast,
 } from "@heroui/react";
 import {
   Document,
@@ -17,12 +18,13 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { useEffect, useState } from "react";
+import { userApi } from "@/requests/user";
 
 interface UserInfoModalProps {
   userInfo: Record<string, any> | undefined;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onApprove?: (pdfBlob: Blob) => void;
+  onSuccess?: () => void;
 }
 
 // Register fallback font
@@ -77,21 +79,53 @@ export default function UserInfoModal({
   userInfo,
   isOpen,
   onOpenChange,
-  onApprove,
+  onSuccess,
 }: UserInfoModalProps) {
   const [height, setHeight] = useState<number>(500);
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const maxHeight = window.innerHeight * 0.8;
     setHeight(maxHeight);
   }, []);
 
-  const handleApprove = () => {
-    if (pdfBlob && onApprove) {
-      onApprove(pdfBlob);
+  const handleApprove = async () => {
+    if (!pdfBlob || !userInfo) return;
+    
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", pdfBlob, "health_record.pdf");
+      
+      const res = await userApi.uploadFile(formData);
+      const fileId = res.fileid;
+      
+      await userApi.createRecord({
+        pdfUrl: fileId,
+        name: userInfo.name,
+        phoneNumber: userInfo.phoneNumber,
+        idCard: userInfo.idCard,
+        forms: userInfo.forms,
+      });
+      
+      addToast({
+        title: "成功",
+        description: "健康档案数据添加成功",
+        color: "success",
+      });
+      onSuccess?.();
+      onOpenChange(false);
+    } catch (error: any) {
+      console.error("上传失败", error);
+      addToast({
+        title: "失败",
+        description: error.message,
+        color: "danger",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    onOpenChange(false);
   };
 
   return (
@@ -118,13 +152,14 @@ export default function UserInfoModal({
               )}
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" onPress={onClose}>
+              <Button color="danger" onPress={onClose} isDisabled={isLoading}>
                 关闭
               </Button>
               <Button 
                 color="primary" 
                 onPress={handleApprove}
-                isDisabled={!pdfBlob}
+                isDisabled={!pdfBlob || isLoading}
+                isLoading={isLoading}
               >
                 审核通过
               </Button>

@@ -11,9 +11,7 @@ import {
 import { usePagination } from "@/hooks/usePagination";
 import { useCallback, useState } from "react";
 import UserInfoModal from "./userInfoModal";
-import { userApi } from "@/requests/user";
 import { CSVUser } from "@/types/user";
-
 
 const columns = [
   {
@@ -35,35 +33,30 @@ const columns = [
     width: 150,
   },
 ];
+
 export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
   const [currentUserInfo, setCurrenUserInfo] = useState<CSVUser | undefined>();
+  const [currentUserIndex, setCurrentUserIndex] = useState<number>(-1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  console.log("user list", userList);
+  const [filteredUserList, setFilteredUserList] = useState<CSVUser[]>(userList);
+
   const onReview = (userInfo: CSVUser) => {
+    const index = userList.findIndex(user => user.name === userInfo.name);
     setCurrenUserInfo(userInfo);
+    setCurrentUserIndex(index);
     setIsOpen(true);
   };
 
-  const handleApprove = async (pdfBlob: Blob) => {
-    // 这里可以调用上传接口
-    console.log("PDF Blob:", pdfBlob);
-    // 例如：
-    const formData = new FormData();
-    formData.append("file", pdfBlob, "health_record.pdf");
-    try {
-      const res = await userApi.uploadFile(formData);
-      console.log("res", res);
-      const fileId = res.fileid;
-      const recordRes = await userApi.createRecord({
-        pdfUrl: fileId,
-        name: currentUserInfo?.name,
-        phoneNumber: currentUserInfo?.phoneNumber,
-        idCard: currentUserInfo?.idCard,
-        forms: currentUserInfo?.forms,
+  const handleSuccess = () => {
+    if (currentUserIndex !== -1) {
+      setFilteredUserList(prev => {
+        const newList = [...prev];
+        const indexToRemove = newList.findIndex(user => user.name === userList[currentUserIndex].name);
+        if (indexToRemove !== -1) {
+          newList.splice(indexToRemove, 1);
+        }
+        return newList;
       });
-      console.log("recordRes", recordRes);
-    } catch (error) {
-      console.error("上传失败", error);
     }
   };
 
@@ -85,13 +78,14 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
       default:
         return <div />;
     }
-  }, []);
+  }, [userList]);
 
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
-      data: userList,
+      data: filteredUserList,
       pageSize: 10,
     });
+
   return (
     <>
       <Table
@@ -140,7 +134,7 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
         userInfo={currentUserInfo}
         isOpen={isOpen}
         onOpenChange={setIsOpen}
-        onApprove={handleApprove}
+        onSuccess={handleSuccess}
       />
     </>
   );
