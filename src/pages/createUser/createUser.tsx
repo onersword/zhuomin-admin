@@ -3,6 +3,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import { readCsv } from "@/utils/readCsv";
 import { useState } from "react";
 import CsvUserList from "./csvUserList";
+import TestPDF from "./testPDF";
 
 export default function CreateUser() {
   const [parsedData, setParsedData] = useState<Record<string, string>[]>([]);
@@ -38,8 +39,10 @@ export default function CreateUser() {
                 hover:file:bg-blue-100"
             />
           </div>
+
           
           {parsedData.length > 0 && <CsvUserList userList={parsedData} />}
+          <TestPDF />
         </div>
       </div>
     </DefaultLayout>

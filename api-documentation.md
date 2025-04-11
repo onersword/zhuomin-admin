@@ -317,7 +317,8 @@ POST /api/records
 
 ```json
 {
-  "userId": "用户 ID",
+  phoneNumber: xxx,
+  idCard: xxx,
   "forms": {
     // 表单数据
   },

@@ -10,7 +10,7 @@ import {
 } from "@heroui/react";
 import { usePagination } from "@/hooks/usePagination";
 import { useState } from "react";
-import UserInfo from "./userInfo";
+import UserInfoModal from "./userInfoModal";
 
 const columns = [
   {
@@ -39,11 +39,11 @@ export default function CsvUserList({
   const [currentUserInfo, setCurrenUserInfo] = useState<
     Record<string, any> | undefined
   >();
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   console.log("user list", userList);
   const onReview = (userInfo: Record<string, any>) => {
     setCurrenUserInfo(userInfo);
-    setOpenDialog(true);
+    setIsOpen(true);
   };
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
@@ -94,7 +94,11 @@ export default function CsvUserList({
           )}
         </TableBody>
       </Table>
-      <UserInfo userInfo={currentUserInfo} />
+      <UserInfoModal 
+        userInfo={currentUserInfo} 
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+      />
     </>
   );
 }
