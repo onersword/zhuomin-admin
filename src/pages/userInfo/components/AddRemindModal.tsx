@@ -8,6 +8,8 @@ import {
   ModalFooter,
   ModalHeader,
   Textarea,
+  useDisclosure,
+  addToast,
 } from "@heroui/react";
 import { useState } from "react";
 import {
@@ -40,6 +42,32 @@ export default function AddRemindModal({
   let formatter = useDateFormatter({ dateStyle: "full" });
 
   const handleConfirm = () => {
+    // Validate all fields
+    if (!title.trim()) {
+      addToast({
+        title: "错误",
+        description: "请输入标题",
+        color: "danger",
+      });
+      return;
+    }
+    if (!description.trim()) {
+      addToast({
+        title: "错误",
+        description: "请输入描述",
+        color: "danger",
+      });
+      return;
+    }
+    if (!remindAt) {
+      addToast({
+        title: "错误",
+        description: "请选择提醒时间",
+        color: "danger",
+      });
+      return;
+    }
+
     onConfirm({ title, description, remindAt });
     setTitle("");
     setDescription("");

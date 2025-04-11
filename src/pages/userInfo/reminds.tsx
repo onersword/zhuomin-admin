@@ -33,12 +33,7 @@ const columns = [
     width: 200,
     align: "end" as const,
   },
-  {
-    label: "更新时间",
-    key: "updatedAt",
-    width: 200,
-    align: "end" as const,
-  },
+
   {
     label: "操作",
     key: "actions",
@@ -65,9 +60,19 @@ export default function Reminds({ userId }: { userId: string }) {
       console.log("data", data);
       await userApi.createUserReminder(userId, data);
       setAddModalOpen(false);
+      addToast({
+        title: '成功',
+        description: '提醒添加成功',
+        color: 'success',
+      })
       getReminds();
     } catch (error) {
       console.error('Failed to create reminder:', error);
+      addToast({
+        title: '错误',
+        description: '提醒添加失败',
+        color: 'danger',
+      });
     }
   };
 
