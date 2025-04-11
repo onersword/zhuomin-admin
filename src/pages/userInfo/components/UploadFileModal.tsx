@@ -6,6 +6,7 @@ import {
   ModalFooter,
   Button,
   addToast,
+  Input,
 } from "@heroui/react";
 import { useState } from "react";
 
@@ -29,7 +30,7 @@ export default function UploadFileModal({
         addToast({
           title: '错误',
           description: '请上传PDF文件',
-          type: 'error',
+          color: 'danger',
         });
         return;
       }
@@ -54,7 +55,9 @@ export default function UploadFileModal({
             <ModalBody>
               <div className="flex flex-col gap-4">
                 <p className="text-sm text-gray-500">请选择PDF格式的体检报告文件</p>
-                <input
+                <Input
+                  placeholder="请选择PDF格式的体检报告文件"
+                  title="请选择PDF格式的体检报告文件"
                   type="file"
                   accept=".pdf"
                   onChange={handleFileChange}
