@@ -13,7 +13,7 @@ import { userApi } from "@/requests/user";
 export default function UserInfoPage() {
   const { id: userId } = useParams();
   const [userInfo, setUserInfo] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<string>("notes");
+  const [activeTab, setActiveTab] = useState<string>("products");
   if (!userId) {
     return <div>用户ID不存在</div>;
   }
@@ -52,14 +52,14 @@ export default function UserInfoPage() {
                 >
                   查看健康档案
                 </Button>
-                <Button
+                {/* <Button
                   color="default"
                   className="text-[#413B3B] bg-white"
                   size="sm"
                   onPress={() => {}}
                 >
                   更新健康档案
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>
