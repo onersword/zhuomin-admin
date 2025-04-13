@@ -68,7 +68,7 @@ const MyDocument = ({ data }: { data: any }) => (
         <Text style={styles.title}>健康档案</Text>
         {Object.entries(data).map(([key, value]) => (
           <Text key={key} style={styles.text}>
-            {key}: {value}
+            {key}: {String(value)}
           </Text>
         ))}
       </View>
