@@ -98,4 +98,8 @@ export const userApi = {
     const response = await http.delete<any>(`/api/users/${userId}`);
     return response;
   },
+  addUserProduct: async (userId: string, productId: string): Promise<any> => {
+    const response = await http.post<any>(`/api/users/${userId}/products`, { productId });
+    return response;
+  },
 };

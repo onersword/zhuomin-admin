@@ -8,9 +8,11 @@ import {
   TableHeader,
   TableRow,
   Pagination,
+  Button,
 } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
+import AddProductModal from "./components/AddProductModal";
 
 const columns = [
   {
@@ -35,6 +37,7 @@ const columns = [
 export default function ProductList({ userId }: { userId: string }) {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const { currentPage, setCurrentPage, currentPageData, totalPages } = usePagination({
     data: products,
@@ -70,51 +73,70 @@ export default function ProductList({ userId }: { userId: string }) {
   }, []);
 
   return (
-    <Table
-      aria-label="产品列表"
-      bottomContent={
-        <div className="flex w-full justify-center">
-          {!loading && products.length > 0 && (
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              color="primary"
-              page={currentPage}
-              total={totalPages}
-              onChange={(page: number) => setCurrentPage(page)}
-            />
-          )}
-        </div>
-      }
-      classNames={{
-        wrapper: "min-h-[222px]",
-      }}
-    >
-      <TableHeader>
-        {columns.map((column) => (
-          <TableColumn
-            key={column.key}
-            width={column.width}
-            align={column.align ?? ("start" as any)}
-          >
-            {column.label}
-          </TableColumn>
-        ))}
-      </TableHeader>
-      <TableBody
-        items={currentPageData}
-        isLoading={loading}
-        emptyContent="暂无数据"
-      >
-        {(item: any) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey as any)}</TableCell>
+    <div className="flex flex-col gap-4">
+      <Table
+        aria-label="已购产品列表"
+        topContent={
+          <div className="flex w-full justify-start">
+            <Button 
+              color="primary" 
+              size="sm" 
+              onPress={() => setIsAddModalOpen(true)}
+            >
+              添加已购产品
+            </Button>
+          </div>
+        }
+        bottomContent={
+          <div className="flex w-full justify-center">
+            {!loading && products.length > 0 && (
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="primary"
+                page={currentPage}
+                total={totalPages}
+                onChange={(page: number) => setCurrentPage(page)}
+              />
             )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+          </div>
+        }
+        classNames={{
+          wrapper: "min-h-[222px]",
+        }}
+      >
+        <TableHeader>
+          {columns.map((column) => (
+            <TableColumn
+              key={column.key}
+              width={column.width}
+              align={column.align ?? ("start" as any)}
+            >
+              {column.label}
+            </TableColumn>
+          ))}
+        </TableHeader>
+        <TableBody
+          items={currentPageData}
+          isLoading={loading}
+          emptyContent="暂无数据"
+        >
+          {(item: any) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey as any)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <AddProductModal
+        isOpen={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        onSuccess={getProducts}
+        userId={userId}
+      />
+    </div>
   );
 }
