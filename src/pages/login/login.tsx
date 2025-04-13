@@ -1,8 +1,9 @@
-import { commonApi } from "@/requests/common";
 import { useState } from "react";
-import { useAuthStore } from "@/store/auth";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@heroui/react";
+
+import { useAuthStore } from "@/store/auth";
+import { commonApi } from "@/requests/common";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function LoginPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -41,31 +43,31 @@ export default function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="username" className="sr-only">
+              <label className="sr-only" htmlFor="username">
                 用户名
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
                 required
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                id="username"
+                name="username"
                 placeholder="用户名"
+                type="text"
                 value={formData.username}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label className="sr-only" htmlFor="password">
                 密码
               </label>
               <input
-                id="password"
-                name="password"
-                type="password"
                 required
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                id="password"
+                name="password"
                 placeholder="密码"
+                type="password"
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -73,7 +75,12 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <Button className="w-full" variant="solid" color="primary" type="submit">
+            <Button
+              className="w-full"
+              color="primary"
+              type="submit"
+              variant="solid"
+            >
               登录
             </Button>
           </div>

@@ -1,5 +1,3 @@
-import { usePagination } from "@/hooks/usePagination";
-import { userApi } from "@/requests/user";
 import {
   Button,
   Pagination,
@@ -13,7 +11,11 @@ import {
 import { Table } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
+
 import UploadFileModal from "./components/UploadFileModal";
+
+import { userApi } from "@/requests/user";
+import { usePagination } from "@/hooks/usePagination";
 
 const columns = [
   {
@@ -61,9 +63,9 @@ export default function Files({ userId }: { userId: string }) {
       case "actions":
         return (
           <div className="flex gap-2 justify-end">
-            <Button 
-              color="primary" 
-              size="sm" 
+            <Button
+              color="primary"
+              size="sm"
               onPress={() => {
                 window.open(item.url, "_blank");
               }}
@@ -86,18 +88,19 @@ export default function Files({ userId }: { userId: string }) {
   const handleUploadFile = async (file: File) => {
     try {
       const formData = new FormData();
-      formData.append('file', file);
-      
+
+      formData.append("file", file);
+
       await userApi.uploadUserFile(userId, formData);
       addToast({
-        title: '成功',
-        description: '文件上传成功',
+        title: "成功",
+        description: "文件上传成功",
       });
       getFiles(); // Refresh the file list
     } catch (error) {
       addToast({
-        title: '错误',
-        description: '文件上传失败',
+        title: "错误",
+        description: "文件上传失败",
       });
     }
   };
@@ -110,17 +113,6 @@ export default function Files({ userId }: { userId: string }) {
     <>
       <Table
         aria-label="文件列表"
-        topContent={
-          <div className="flex w-full justify-start">
-            <Button 
-              color="primary" 
-              size="sm" 
-              onPress={() => setUploadModalOpen(true)}
-            >
-              上传体检报告
-            </Button>
-          </div>
-        }
         bottomContent={
           <div className="flex w-full justify-center">
             {!loading && files.length > 0 && (
@@ -139,22 +131,33 @@ export default function Files({ userId }: { userId: string }) {
         classNames={{
           wrapper: "min-h-[222px]",
         }}
+        topContent={
+          <div className="flex w-full justify-start">
+            <Button
+              color="primary"
+              size="sm"
+              onPress={() => setUploadModalOpen(true)}
+            >
+              上传体检报告
+            </Button>
+          </div>
+        }
       >
         <TableHeader>
           {columns.map((column) => (
             <TableColumn
               key={column.key}
-              width={column.width}
               align={column.align ?? ("start" as any)}
+              width={column.width}
             >
               {column.label}
             </TableColumn>
           ))}
         </TableHeader>
         <TableBody
-          items={currentPageData}
-          isLoading={loading}
           emptyContent="暂无数据"
+          isLoading={loading}
+          items={currentPageData}
         >
           {(item: any) => (
             <TableRow key={item.id}>
@@ -168,8 +171,8 @@ export default function Files({ userId }: { userId: string }) {
 
       <UploadFileModal
         isOpen={uploadModalOpen}
-        onOpenChange={setUploadModalOpen}
         onConfirm={handleUploadFile}
+        onOpenChange={setUploadModalOpen}
       />
     </>
   );

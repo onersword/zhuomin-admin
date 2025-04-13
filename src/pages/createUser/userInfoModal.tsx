@@ -18,6 +18,7 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { useEffect, useState } from "react";
+
 import { userApi } from "@/requests/user";
 
 interface UserInfoModalProps {
@@ -87,20 +88,22 @@ export default function UserInfoModal({
 
   useEffect(() => {
     const maxHeight = window.innerHeight * 0.8;
+
     setHeight(maxHeight);
   }, []);
 
   const handleApprove = async () => {
     if (!pdfBlob || !userInfo) return;
-    
+
     setIsLoading(true);
     try {
       const formData = new FormData();
+
       formData.append("file", pdfBlob, "health_record.pdf");
-      
+
       const res = await userApi.uploadFile(formData);
       const fileId = res.fileid;
-      
+
       await userApi.createRecord({
         pdfUrl: fileId,
         name: userInfo.name,
@@ -108,7 +111,7 @@ export default function UserInfoModal({
         idCard: userInfo.idCard,
         forms: userInfo.forms,
       });
-      
+
       addToast({
         title: "成功",
         description: "健康档案数据添加成功",
@@ -129,7 +132,7 @@ export default function UserInfoModal({
   };
 
   return (
-    <Modal size="5xl" isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} size="5xl" onOpenChange={onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -137,7 +140,7 @@ export default function UserInfoModal({
             <ModalBody>
               {userInfo && (
                 <div className="space-y-2">
-                  <PDFViewer width="100%" height={height}>
+                  <PDFViewer height={height} width="100%">
                     <MyDocument data={userInfo.forms} />
                   </PDFViewer>
                   <BlobProvider document={<MyDocument data={userInfo.forms} />}>
@@ -145,6 +148,7 @@ export default function UserInfoModal({
                       if (blob) {
                         setPdfBlob(blob);
                       }
+
                       return null;
                     }}
                   </BlobProvider>
@@ -152,14 +156,14 @@ export default function UserInfoModal({
               )}
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" onPress={onClose} isDisabled={isLoading}>
+              <Button color="danger" isDisabled={isLoading} onPress={onClose}>
                 关闭
               </Button>
-              <Button 
-                color="primary" 
-                onPress={handleApprove}
+              <Button
+                color="primary"
                 isDisabled={!pdfBlob || isLoading}
                 isLoading={isLoading}
+                onPress={handleApprove}
               >
                 审核通过
               </Button>

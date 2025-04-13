@@ -8,9 +8,11 @@ import {
   Button,
   Pagination,
 } from "@heroui/react";
-import { usePagination } from "@/hooks/usePagination";
 import { useCallback, useState } from "react";
+
 import UserInfoModal from "./userInfoModal";
+
+import { usePagination } from "@/hooks/usePagination";
 import { CSVUser } from "@/types/user";
 
 const columns = [
@@ -41,7 +43,8 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
   const [filteredUserList, setFilteredUserList] = useState<CSVUser[]>(userList);
 
   const onReview = (userInfo: CSVUser) => {
-    const index = userList.findIndex(user => user.name === userInfo.name);
+    const index = userList.findIndex((user) => user.name === userInfo.name);
+
     setCurrenUserInfo(userInfo);
     setCurrentUserIndex(index);
     setIsOpen(true);
@@ -49,36 +52,43 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
 
   const handleSuccess = () => {
     if (currentUserIndex !== -1) {
-      setFilteredUserList(prev => {
+      setFilteredUserList((prev) => {
         const newList = [...prev];
-        const indexToRemove = newList.findIndex(user => user.name === userList[currentUserIndex].name);
+        const indexToRemove = newList.findIndex(
+          (user) => user.name === userList[currentUserIndex].name,
+        );
+
         if (indexToRemove !== -1) {
           newList.splice(indexToRemove, 1);
         }
+
         return newList;
       });
     }
   };
 
-  const renderCell = useCallback((item: CSVUser, columnKey: string) => {
-    switch (columnKey) {
-      case "name":
-        return <div>{item.name}</div>;
-      case "phoneNumber":
-        return <div className="tabular-nums">{item.phoneNumber}</div>;
-      case "idCard":
-        return <div className="tabular-nums">{item.idCard}</div>;
-      case "options":
-        return (
-          <Button color="primary" size="sm" onPress={() => onReview(item)}>
-            审核
-          </Button>
-        );
+  const renderCell = useCallback(
+    (item: CSVUser, columnKey: string) => {
+      switch (columnKey) {
+        case "name":
+          return <div>{item.name}</div>;
+        case "phoneNumber":
+          return <div className="tabular-nums">{item.phoneNumber}</div>;
+        case "idCard":
+          return <div className="tabular-nums">{item.idCard}</div>;
+        case "options":
+          return (
+            <Button color="primary" size="sm" onPress={() => onReview(item)}>
+              审核
+            </Button>
+          );
 
-      default:
-        return <div />;
-    }
-  }, [userList]);
+        default:
+          return <div />;
+      }
+    },
+    [userList],
+  );
 
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
@@ -111,8 +121,8 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
           {columns.map((column) => (
             <TableColumn
               key={column.key}
-              width={column.width}
               align={column.align ?? ("start" as const)}
+              width={column.width}
             >
               {column.label}
             </TableColumn>
@@ -131,8 +141,8 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
         </TableBody>
       </Table>
       <UserInfoModal
-        userInfo={currentUserInfo}
         isOpen={isOpen}
+        userInfo={currentUserInfo}
         onOpenChange={setIsOpen}
         onSuccess={handleSuccess}
       />

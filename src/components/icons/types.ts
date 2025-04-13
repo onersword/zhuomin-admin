@@ -1,8 +1,8 @@
-import { SVGProps } from 'react';
+import { SVGProps } from "react";
 
 export interface IconProps extends SVGProps<SVGSVGElement> {
   size?: number | string;
   className?: string;
 }
 
-export type { SVGProps }; 
+export type { SVGProps };

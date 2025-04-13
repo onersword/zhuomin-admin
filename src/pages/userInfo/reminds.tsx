@@ -1,5 +1,3 @@
-import { usePagination } from "@/hooks/usePagination";
-import { userApi } from "@/requests/user";
 import {
   Button,
   Pagination,
@@ -13,8 +11,12 @@ import {
 import { Table } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
+
 import AddRemindModal from "./components/AddRemindModal";
 import DeleteRemindModal from "./components/DeleteRemindModal";
+
+import { userApi } from "@/requests/user";
+import { usePagination } from "@/hooks/usePagination";
 
 const columns = [
   {
@@ -55,23 +57,27 @@ export default function Reminds({ userId }: { userId: string }) {
       pageSize: 20,
     });
 
-  const handleAddRemind = async (data: { title: string; description: string; remindAt: string }) => {
+  const handleAddRemind = async (data: {
+    title: string;
+    description: string;
+    remindAt: string;
+  }) => {
     try {
       console.log("data", data);
       await userApi.createUserReminder(userId, data);
       setAddModalOpen(false);
       addToast({
-        title: '成功',
-        description: '提醒添加成功',
-        color: 'success',
-      })
+        title: "成功",
+        description: "提醒添加成功",
+        color: "success",
+      });
       getReminds();
     } catch (error) {
-      console.error('Failed to create reminder:', error);
+      console.error("Failed to create reminder:", error);
       addToast({
-        title: '错误',
-        description: '提醒添加失败',
-        color: 'danger',
+        title: "错误",
+        description: "提醒添加失败",
+        color: "danger",
       });
     }
   };
@@ -81,15 +87,15 @@ export default function Reminds({ userId }: { userId: string }) {
     try {
       await userApi.deleteUserReminder(selectedRemind.id);
       addToast({
-        title: '成功',
-        description: '提醒删除成功',
-        color: 'success',
+        title: "成功",
+        description: "提醒删除成功",
+        color: "success",
       });
       getReminds();
     } catch (error) {
       addToast({
-        title: '错误',
-        description: '提醒删除失败',
+        title: "错误",
+        description: "提醒删除失败",
       });
     }
   };
@@ -115,9 +121,9 @@ export default function Reminds({ userId }: { userId: string }) {
       case "actions":
         return (
           <div className="flex gap-2 justify-end">
-            <Button 
-              color="danger" 
-              size="sm" 
+            <Button
+              color="danger"
+              size="sm"
               onPress={() => {
                 setSelectedRemind(item);
                 setDeleteModalOpen(true);
@@ -146,17 +152,6 @@ export default function Reminds({ userId }: { userId: string }) {
     <>
       <Table
         aria-label="Example table with client side pagination"
-        topContent={
-          <div className="flex w-full justify-start">
-            <Button 
-              color="primary" 
-              size="sm" 
-              onPress={() => setAddModalOpen(true)}
-            >
-              添加提醒
-            </Button>
-          </div>
-        }
         bottomContent={
           <div className="flex w-full justify-center">
             {!loading && reminds.length > 0 && (
@@ -175,22 +170,33 @@ export default function Reminds({ userId }: { userId: string }) {
         classNames={{
           wrapper: "min-h-[222px]",
         }}
+        topContent={
+          <div className="flex w-full justify-start">
+            <Button
+              color="primary"
+              size="sm"
+              onPress={() => setAddModalOpen(true)}
+            >
+              添加提醒
+            </Button>
+          </div>
+        }
       >
         <TableHeader>
           {columns.map((column) => (
             <TableColumn
               key={column.key}
-              width={column.width}
               align={column.align ?? ("start" as any)}
+              width={column.width}
             >
               {column.label}
             </TableColumn>
           ))}
         </TableHeader>
         <TableBody
-          items={currentPageData}
-          isLoading={loading}
           emptyContent="暂无数据"
+          isLoading={loading}
+          items={currentPageData}
         >
           {(item: any) => (
             <TableRow key={item.id}>
@@ -204,14 +210,14 @@ export default function Reminds({ userId }: { userId: string }) {
 
       <AddRemindModal
         isOpen={addModalOpen}
-        onOpenChange={setAddModalOpen}
         onConfirm={handleAddRemind}
+        onOpenChange={setAddModalOpen}
       />
 
       <DeleteRemindModal
         isOpen={deleteModalOpen}
-        onOpenChange={setDeleteModalOpen}
         onConfirm={handleDeleteRemind}
+        onOpenChange={setDeleteModalOpen}
       />
     </>
   );

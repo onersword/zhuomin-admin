@@ -1,5 +1,3 @@
-import { usePagination } from "@/hooks/usePagination";
-import { userApi } from "@/requests/user";
 import {
   Button,
   Pagination,
@@ -12,10 +10,14 @@ import {
 import { Table } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
+
 import ViewNoteModal from "./components/ViewNoteModal";
 import EditNoteModal from "./components/EditNoteModal";
 import DeleteNoteModal from "./components/DeleteNoteModal";
 import AddNoteModal from "./components/AddNoteModal";
+
+import { userApi } from "@/requests/user";
+import { usePagination } from "@/hooks/usePagination";
 
 const columns = [
   {
@@ -57,7 +59,7 @@ export default function Notes({ userId }: { userId: string }) {
       await userApi.updateUserNote(userId, id, { content: newContent });
       getNotes();
     } catch (error) {
-      console.error('Failed to update note:', error);
+      console.error("Failed to update note:", error);
     }
   };
 
@@ -67,7 +69,7 @@ export default function Notes({ userId }: { userId: string }) {
       await userApi.deleteUserNote(userId, selectedNote.id);
       getNotes();
     } catch (error) {
-      console.error('Failed to delete note:', error);
+      console.error("Failed to delete note:", error);
     }
   };
 
@@ -76,7 +78,7 @@ export default function Notes({ userId }: { userId: string }) {
       await userApi.createUserNote(userId, { content });
       getNotes();
     } catch (error) {
-      console.error('Failed to create note:', error);
+      console.error("Failed to create note:", error);
     }
   };
 
@@ -93,9 +95,9 @@ export default function Notes({ userId }: { userId: string }) {
       case "actions":
         return (
           <div className="flex gap-2 justify-end">
-            <Button 
-              color="primary" 
-              size="sm" 
+            <Button
+              color="primary"
+              size="sm"
               onPress={() => {
                 setSelectedNote(item);
                 setViewModalOpen(true);
@@ -103,9 +105,9 @@ export default function Notes({ userId }: { userId: string }) {
             >
               查看
             </Button>
-            <Button 
-              color="primary" 
-              size="sm" 
+            <Button
+              color="primary"
+              size="sm"
               onPress={() => {
                 setSelectedNote(item);
                 setEditModalOpen(true);
@@ -113,9 +115,9 @@ export default function Notes({ userId }: { userId: string }) {
             >
               编辑
             </Button>
-            <Button 
-              color="danger" 
-              size="sm" 
+            <Button
+              color="danger"
+              size="sm"
               onPress={() => {
                 setSelectedNote(item);
                 setDeleteModalOpen(true);
@@ -144,17 +146,6 @@ export default function Notes({ userId }: { userId: string }) {
     <>
       <Table
         aria-label="Example table with client side pagination"
-        topContent={
-          <div className="flex w-full justify-start">
-            <Button 
-              color="primary" 
-              size="sm" 
-              onPress={() => setAddModalOpen(true)}
-            >
-              添加健康小结
-            </Button>
-          </div>
-        }
         bottomContent={
           <div className="flex w-full justify-center">
             {!loading && notes.length > 0 && (
@@ -173,22 +164,33 @@ export default function Notes({ userId }: { userId: string }) {
         classNames={{
           wrapper: "min-h-[222px]",
         }}
+        topContent={
+          <div className="flex w-full justify-start">
+            <Button
+              color="primary"
+              size="sm"
+              onPress={() => setAddModalOpen(true)}
+            >
+              添加健康小结
+            </Button>
+          </div>
+        }
       >
         <TableHeader>
           {columns.map((column) => (
             <TableColumn
               key={column.key}
-              width={column.width}
               align={column.align ?? ("start" as any)}
+              width={column.width}
             >
               {column.label}
             </TableColumn>
           ))}
         </TableHeader>
         <TableBody
-          items={currentPageData}
-          isLoading={loading}
           emptyContent="暂无数据"
+          isLoading={loading}
+          items={currentPageData}
         >
           {(item: any) => (
             <TableRow key={item.id}>
@@ -204,27 +206,27 @@ export default function Notes({ userId }: { userId: string }) {
         <>
           <ViewNoteModal
             isOpen={viewModalOpen}
-            onOpenChange={setViewModalOpen}
             note={selectedNote}
+            onOpenChange={setViewModalOpen}
           />
           <EditNoteModal
             isOpen={editModalOpen}
-            onOpenChange={setEditModalOpen}
             note={selectedNote}
             onConfirm={handleEditNote}
+            onOpenChange={setEditModalOpen}
           />
           <DeleteNoteModal
             isOpen={deleteModalOpen}
-            onOpenChange={setDeleteModalOpen}
             onConfirm={handleDeleteNote}
+            onOpenChange={setDeleteModalOpen}
           />
         </>
       )}
 
       <AddNoteModal
         isOpen={addModalOpen}
-        onOpenChange={setAddModalOpen}
         onConfirm={handleAddNote}
+        onOpenChange={setAddModalOpen}
       />
     </>
   );

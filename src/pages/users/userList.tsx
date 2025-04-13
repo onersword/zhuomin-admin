@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { User, userApi } from "@/requests/user";
 import {
   Button,
   Pagination,
@@ -11,9 +10,11 @@ import {
   TableCell,
   getKeyValue,
 } from "@heroui/react";
-import { usePagination } from "@/hooks/usePagination";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+
+import { usePagination } from "@/hooks/usePagination";
+import { User, userApi } from "@/requests/user";
 
 const columns = [
   {
@@ -56,7 +57,11 @@ export default function UserList() {
         return moment(cellValue).format("YYYY-MM-DD HH:mm:ss");
       case "actions":
         return (
-          <Button color="primary" size="sm" onPress={() => navigate(`/users/${user.id}`)}>
+          <Button
+            color="primary"
+            size="sm"
+            onPress={() => navigate(`/users/${user.id}`)}
+          >
             管理
           </Button>
         );
@@ -66,6 +71,7 @@ export default function UserList() {
   }, []);
 
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     setLoading(true);
     userApi.getUsers().then((res: User[]) => {

@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
-import { Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink, Font } from '@react-pdf/renderer';
-import { Button, addToast } from '@heroui/react';
-
+import React, { useState } from "react";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  PDFViewer,
+  PDFDownloadLink,
+  Font,
+} from "@react-pdf/renderer";
+import { Button, addToast } from "@heroui/react";
 
 // Register fallback font
 Font.register({
-  family: 'Noto Sans SC',
-  src: '/fonts/NotoSansSC-Regular.ttf',
+  family: "Noto Sans SC",
+  src: "/fonts/NotoSansSC-Regular.ttf",
 });
 
 // PDF styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'column',
-    backgroundColor: '#E4E4E4',
+    flexDirection: "column",
+    backgroundColor: "#E4E4E4",
     padding: 30,
-    fontFamily: 'Noto Sans SC',
+    fontFamily: "Noto Sans SC",
   },
   section: {
     margin: 10,
@@ -24,14 +32,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
-    fontFamily: 'Noto Sans SC',
+    fontFamily: "Noto Sans SC",
   },
   text: {
     fontSize: 12,
     marginBottom: 10,
-    fontFamily: 'Noto Sans SC',
+    fontFamily: "Noto Sans SC",
   },
 });
 
@@ -52,50 +60,50 @@ const MyDocument = ({ data }: { data: any }) => (
 
 export default function TestPDF() {
   const [pdfData, setPdfData] = useState({
-    name: '测试用户',
-    email: 'test@example.com',
+    name: "测试用户",
+    email: "test@example.com",
   });
 
   const handleUpload = async () => {
     try {
       // 这里需要替换为实际的 API 调用
-      const response = await fetch('/api/upload-pdf', {
-        method: 'POST',
+      const response = await fetch("/api/upload-pdf", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(pdfData),
       });
 
       if (response.ok) {
         addToast({
-          title: '成功',
-          description: 'PDF 上传成功',
-          color: 'success',
+          title: "成功",
+          description: "PDF 上传成功",
+          color: "success",
         });
       } else {
         addToast({
-          title: '错误',
-          description: 'PDF 上传失败',
-          color: 'danger',
+          title: "错误",
+          description: "PDF 上传失败",
+          color: "danger",
         });
       }
     } catch (error) {
       addToast({
-        title: '错误',
-        description: '上传过程中发生错误',
-        color: 'danger',
+        title: "错误",
+        description: "上传过程中发生错误",
+        color: "danger",
       });
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
     }
   };
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">PDF 生成与预览</h1>
-      
+
       <div className="mb-4">
-        <PDFViewer width="100%" height="500px">
+        <PDFViewer height="500px" width="100%">
           <MyDocument data={pdfData} />
         </PDFViewer>
       </div>
@@ -118,7 +126,7 @@ export default function TestPDF() {
           }
         </PDFDownloadLink>
 
-        <Button 
+        <Button
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
           onClick={handleUpload}
         >

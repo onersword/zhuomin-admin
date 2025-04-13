@@ -1,2 +1,2 @@
-export * from './ChevronRightIcon';
-export * from './ArrowLeftIcon'; 
+export * from "./ChevronRightIcon";
+export * from "./ArrowLeftIcon";

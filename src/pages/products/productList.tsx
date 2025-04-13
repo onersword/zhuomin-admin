@@ -1,6 +1,3 @@
-import { usePagination } from "@/hooks/usePagination";
-import { Product, productApi } from "@/requests/product";
-import { ProductStatus } from "@/types/product";
 import moment from "moment";
 import {
   getKeyValue,
@@ -16,7 +13,12 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
+
 import ChangePriceModal from "./components/ChangePriceModal";
+
+import { ProductStatus } from "@/types/product";
+import { Product, productApi } from "@/requests/product";
+import { usePagination } from "@/hooks/usePagination";
 
 const columns = [
   {
@@ -47,7 +49,7 @@ const columns = [
 export default function ProductList({ status }: { status: ProductStatus }) {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const { isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
@@ -57,6 +59,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
 
   const changeStatus = (id: number) => {
     let tempStatus = status;
+
     if (status === ProductStatus.ONLINE) {
       tempStatus = ProductStatus.OFFLINE;
     } else {
@@ -65,6 +68,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
 
     productApi.changeStatus(id, tempStatus).then(() => {
       const text = tempStatus === ProductStatus.ONLINE ? "上架" : "下架";
+
       addToast({
         title: "操作成功",
         description: `产品${text}成功`,
@@ -146,7 +150,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
           return <div>{cellValue}</div>;
       }
     },
-    [status]
+    [status],
   );
 
   useEffect(() => {
@@ -180,17 +184,17 @@ export default function ProductList({ status }: { status: ProductStatus }) {
           {columns.map((column) => (
             <TableColumn
               key={column.key}
-              width={column.width}
               align={column.align ?? ("start" as any)}
+              width={column.width}
             >
               {column.label}
             </TableColumn>
           ))}
         </TableHeader>
         <TableBody
-          items={currentPageData}
-          isLoading={loading}
           emptyContent="暂无数据"
+          isLoading={loading}
+          items={currentPageData}
         >
           {(item: Product) => (
             <TableRow key={item.id}>
@@ -204,9 +208,9 @@ export default function ProductList({ status }: { status: ProductStatus }) {
       {selectedProduct && (
         <ChangePriceModal
           isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          onConfirm={handlePriceChange}
           oldPrice={selectedProduct.price}
+          onConfirm={handlePriceChange}
+          onOpenChange={onOpenChange}
         />
       )}
     </>
