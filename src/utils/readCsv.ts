@@ -3,7 +3,7 @@ import Papa from 'papaparse';
 import { Buffer } from 'buffer';
 
 const excludeFileds = [
-  'IP', 'Referrer', 'UA',
+  'IP', 'Referrer', 'UA', '答题时长',
   '地理位置国家和地区', '地理位置市', '地理位置省', '家庭地址(经度，纬度)',
   '昵称',
   '开始答题时间', '清洗数据结果', '用户标识', '用户类型','结束答题时间', '编号', '自定义字段',

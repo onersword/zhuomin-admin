@@ -38,43 +38,55 @@ Font.register({
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
-    backgroundColor: "#E4E4E4",
-    padding: 30,
+    backgroundColor: "#fff",
+    padding: 40,
     fontFamily: "Noto Sans SC",
   },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1,
+  row: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    borderBottomStyle: "solid",
+    paddingVertical: 8,
+    marginBottom: 4,
   },
-  title: {
-    fontSize: 24,
-    textAlign: "center",
-    marginBottom: 20,
-    fontFamily: "Noto Sans SC",
-  },
-  text: {
+  label: {
+    width: "30%",
     fontSize: 12,
-    marginBottom: 10,
-    fontFamily: "Noto Sans SC",
+    color: "#000",
   },
+  value: {
+    flex: 1,
+    fontSize: 12,
+    color: "#000",
+  },
+  dashedValue: {
+    flex: 1,
+    fontSize: 12,
+    color: "#000",
+    borderBottomWidth: 1,
+    borderBottomColor: "#666",
+    borderBottomStyle: "dashed",
+  }
 });
 
 // PDF Document component
-const MyDocument = ({ data }: { data: any }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Text style={styles.title}>健康档案</Text>
-        {Object.entries(data).map(([key, value]) => (
-          <Text key={key} style={styles.text}>
-            {key}: {String(value)}
-          </Text>
+const MyDocument = ({ data }: { data: any }) => {
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        {Object.entries(data).map(([key, value], index) => (
+          <View style={styles.row} key={index}>
+            <Text style={styles.label}>{key}</Text>
+            <Text style={String(value) === "----" ? styles.dashedValue : styles.value}>
+              {String(value || "----")}
+            </Text>
+          </View>
         ))}
-      </View>
-    </Page>
-  </Document>
-);
+      </Page>
+    </Document>
+  );
+};
 
 export default function UserInfoModal({
   userInfo,
