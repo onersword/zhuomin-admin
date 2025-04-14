@@ -88,7 +88,7 @@ export default function UserList() {
       aria-label="Example table with client side pagination"
       bottomContent={
         <div className="flex w-full justify-center">
-          {!loading && (
+          {!loading && users.length > 0 && (
             <Pagination
               isCompact
               showControls

@@ -60,7 +60,7 @@ export default function UserInfoPage() {
                   className="text-[#413B3B] bg-white"
                   color="default"
                   size="sm"
-                  onPress={() => {}}
+                  onPress={() => {window.open(userInfo.pdfUrl)}}
                 >
                   查看健康档案
                 </Button>
