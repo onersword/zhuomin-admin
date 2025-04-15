@@ -9,6 +9,44 @@ const excludeFileds = [
   '开始答题时间', '清洗数据结果', '用户标识', '用户类型','结束答题时间', '编号', '自定义字段',
 ]
 
+// Common encodings to try
+const ENCODINGS = ['utf-8', 'gbk', 'gb2312', 'big5', 'utf-16le', 'utf-16be'];
+
+/**
+ * Try to detect the encoding of a buffer
+ * @param buffer The buffer to detect encoding from
+ * @returns The detected encoding or null if no encoding matches
+ */
+function detectEncoding(buffer: ArrayBuffer): string | null {
+  const uint8Array = new Uint8Array(buffer);
+  
+  // Check for BOM (Byte Order Mark)
+  if (uint8Array[0] === 0xEF && uint8Array[1] === 0xBB && uint8Array[2] === 0xBF) {
+    return 'utf-8';
+  }
+  if (uint8Array[0] === 0xFF && uint8Array[1] === 0xFE) {
+    return 'utf-16le';
+  }
+  if (uint8Array[0] === 0xFE && uint8Array[1] === 0xFF) {
+    return 'utf-16be';
+  }
+
+  // Try each encoding
+  for (const encoding of ENCODINGS) {
+    try {
+      const decoded = iconv.decode(uint8Array as Buffer, encoding);
+      // Check if the decoded text contains valid characters
+      if (decoded.length > 0 && !decoded.includes('')) {
+        return encoding;
+      }
+    } catch (e) {
+      continue;
+    }
+  }
+
+  return null;
+}
+
 /**
  * Parse CSV file content into an array of objects
  * @param file The CSV file to parse
@@ -21,7 +59,14 @@ export const readCsv = async (file: File): Promise<Record<string, string>[]> => 
     reader.onload = (event) => {
       try {
         const buffer = event.target!.result as ArrayBuffer;
-        const decodedText = iconv.decode(new Uint8Array(buffer) as Buffer, 'gbk');
+        const detectedEncoding = detectEncoding(buffer);
+        
+        if (!detectedEncoding) {
+          throw new Error('无法检测文件编码');
+        }
+
+        console.log('检测到的编码:', detectedEncoding);
+        const decodedText = iconv.decode(new Uint8Array(buffer) as Buffer, detectedEncoding);
 
         Papa.parse(decodedText, {
           header: false, // 不直接使用表头，因为有重复字段
@@ -44,68 +89,6 @@ export const readCsv = async (file: File): Promise<Record<string, string>[]> => 
       } catch (error) {
         console.error('处理文件时出错:', error);
       }
-      // try {
-      //   const arrayBuffer = event.target?.result as ArrayBuffer;
-      //   console.log('arrayBuffer', arrayBuffer);
-      //   // Try different encodings
-      //   // const encodings = ['utf-8', 'gbk', 'gb2312', 'big5'];
-      //   const decoder = new TextDecoder('gbk'); // 确保浏览器支持 GBK
-      //   const decodedText = decoder.decode(new Uint8Array(arrayBuffer));
-      //   // 使用 Papa Parse 解析 CSV
-      //   Papa.parse(decodedText, {
-      //     header: true, // 第一行作为表头
-      //     skipEmptyLines: true, // 跳过空行
-      //     complete: function(results: any) {
-      //         console.log('解析结果:', results.data);
-      //     },
-      //     error: function(error: any) {
-      //         console.error('解析出错:', error);
-      //     }
-      // });
-      // let content = '';
-      // try {
-      //   const decoder = new TextDecoder('gbk', { fatal: false });
-      //   content = decoder.decode(arrayBuffer);
-      //   console.log('csv content', content);
-      //   // If we can decode without error, break the loop
-      //   // break;
-      // } catch (e) {
-      //   // Try next encoding
-      //   console.log('error', e);
-      //   throw e;
-      // }
-
-      // // Remove BOM if present
-      // content = content.replace(/^\uFEFF/, '');
-
-      // const lines = content.split('\n');
-      // console.log('lines', lines);
-
-      // // Get headers from first line
-      // const headers = lines[0].split(',').map(header => header.trim());
-      // console.log('headers', headers);
-      // // Parse data rows
-      // const data = lines.slice(1)
-      //   .filter(line => line.trim()) // Remove empty lines
-      //   .map(line => {
-      //     // Handle quoted values
-      //     const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-      //     const row: Record<string, string> = {};
-
-      //     headers.forEach((header, index) => {
-      //       let value = values[index] || '';
-      //       // Remove quotes if present
-      //       value = value.replace(/^"|"$/g, '');
-      //       row[header] = value.trim();
-      //     });
-
-      //     return row;
-      //   });
-
-      // resolve(data);
-      // } catch (error) {
-      //   reject(error);
-      // }
     };
 
     reader.onerror = () => {
