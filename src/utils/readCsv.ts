@@ -10,7 +10,19 @@ const excludeFileds = [
 ]
 
 // Common encodings to try
-const ENCODINGS = ['utf-8', 'gbk', 'gb2312', 'big5', 'utf-16le', 'utf-16be'];
+const ENCODINGS = [
+  'gbk',
+  'gb2312',
+  'gb18030',
+  'big5',
+  'utf-8',
+  'utf-16le',
+  'utf-16be',
+  'euc-cn',
+  'hz-gb-2312',
+  'iso-8859-1',
+  'windows-1252'
+];
 
 /**
  * Try to detect the encoding of a buffer
@@ -30,13 +42,23 @@ function detectEncoding(buffer: ArrayBuffer): string | null {
   if (uint8Array[0] === 0xFE && uint8Array[1] === 0xFF) {
     return 'utf-16be';
   }
+  console.log({
+    1: uint8Array[0],
+    2: uint8Array[1],
+    3: uint8Array[2],
+  })
 
   // Try each encoding
   for (const encoding of ENCODINGS) {
     try {
       const decoded = iconv.decode(uint8Array as Buffer, encoding);
+      console.log({
+        decoded,
+        encoding,
+      })
       // Check if the decoded text contains valid characters
-      if (decoded.length > 0 && !decoded.includes('')) {
+
+      if (decoded.length > 0 && decoded.indexOf('开始答题时间') !== -1) {
         return encoding;
       }
     } catch (e) {

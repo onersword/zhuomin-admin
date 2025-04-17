@@ -8,7 +8,7 @@ import {
   Button,
   Pagination,
 } from "@heroui/react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import UserInfoModal from "./userInfoModal";
 
@@ -37,10 +37,12 @@ const columns = [
 ];
 
 export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
+  console.log('userList', userList)
   const [currentUserInfo, setCurrenUserInfo] = useState<CSVUser | undefined>();
   const [currentUserIndex, setCurrentUserIndex] = useState<number>(-1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [filteredUserList, setFilteredUserList] = useState<CSVUser[]>(userList);
+  console.log('filteredUserList', filteredUserList)
 
   const onReview = (userInfo: CSVUser) => {
     const index = userList.findIndex((user) => user.name === userInfo.name);
@@ -96,6 +98,10 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
       pageSize: 10,
     });
 
+    useEffect(() => {
+      setFilteredUserList(userList)
+    }, [userList])
+
   return (
     <>
       <Table
@@ -116,6 +122,8 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
         classNames={{
           wrapper: "min-h-[222px]",
         }}
+        color="default"
+
       >
         <TableHeader>
           {columns.map((column) => (
@@ -130,7 +138,7 @@ export default function CsvUserList({ userList }: { userList: CSVUser[] }) {
         </TableHeader>
         <TableBody items={currentPageData}>
           {(item: CSVUser) => (
-            <TableRow key={item.name}>
+            <TableRow key={item.name} className="hover:bg-gray-100">
               {columns.map((column) => (
                 <TableCell key={column.key}>
                   {renderCell(item, column.key)}
