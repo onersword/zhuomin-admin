@@ -197,7 +197,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
           items={currentPageData}
         >
           {(item: Product) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} className="hover:bg-gray-100">
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey as any)}</TableCell>
               )}

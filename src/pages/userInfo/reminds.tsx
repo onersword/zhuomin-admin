@@ -199,7 +199,7 @@ export default function Reminds({ userId }: { userId: string }) {
           items={currentPageData}
         >
           {(item: any) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} className="hover:bg-gray-100">
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey as any)}</TableCell>
               )}

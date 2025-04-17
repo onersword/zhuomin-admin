@@ -112,7 +112,7 @@ export default function UserList() {
       </TableHeader>
       <TableBody items={currentPageData}>
         {(item: User) => (
-          <TableRow key={item.id}>
+          <TableRow key={item.id} className="hover:bg-gray-100">
             {(columnKey) => (
               <TableCell key={columnKey}>
                 {renderCell(item, columnKey as any)}
