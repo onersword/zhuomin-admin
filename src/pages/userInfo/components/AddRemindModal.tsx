@@ -11,7 +11,7 @@ import {
   useDisclosure,
   addToast,
 } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   now,
   getLocalTimeZone,
@@ -75,15 +75,19 @@ export default function AddRemindModal({
   };
 
   const handleDateTimeChange = (value: any) => {
-    let date = value.toDate(getLocalTimeZone());
+    setDateTime(value);
+  };
+
+  useEffect(() => {
+    // @ts-ignore
+    let date =dateTime.toDate(getLocalTimeZone());
 
     console.log("date", date);
     console.log("moment", moment(date).format("YYYY-MM-DD HH:mm:ss"));
     console.log("date", formatter.format(date));
     console.log("remindAt", moment(date).toISOString());
     setRemindAt(moment(date).toISOString());
-    setDateTime(value);
-  };
+  }, [setDateTime]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
