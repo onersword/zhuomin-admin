@@ -95,12 +95,14 @@ export default function Files({ userId }: { userId: string }) {
       addToast({
         title: "成功",
         description: "文件上传成功",
+        color: "success",
       });
       getFiles(); // Refresh the file list
     } catch (error) {
       addToast({
         title: "错误",
         description: "文件上传失败",
+        color: "danger",
       });
     }
   };

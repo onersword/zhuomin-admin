@@ -18,6 +18,7 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 import { userApi } from "@/requests/user";
 
@@ -111,7 +112,7 @@ export default function UserInfoModal({
     try {
       const formData = new FormData();
 
-      formData.append("file", pdfBlob, "health_record.pdf");
+      formData.append("file", pdfBlob, `${uuidv4()}.pdf`);
 
       const res = await userApi.uploadFile(formData);
       const fileId = res.fileid;
