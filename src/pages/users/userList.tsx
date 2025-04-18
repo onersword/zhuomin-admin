@@ -49,6 +49,12 @@ export default function UserList() {
       pageSize: rowsPerPage,
     });
 
+  const deleteUser = useCallback((id: string) => {
+    userApi.deleteUser(id).then((res) => {
+      console.log("delete user", res);
+      getUsers();
+    });
+  }, []);
   const renderCell = useCallback((user: User, columnKey: string) => {
     const cellValue = getKeyValue(user, columnKey);
 
@@ -57,13 +63,22 @@ export default function UserList() {
         return moment(cellValue).format("YYYY-MM-DD HH:mm:ss");
       case "actions":
         return (
-          <Button
-            color="primary"
-            size="sm"
-            onPress={() => navigate(`/users/${user.id}`)}
-          >
-            管理
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              color="primary"
+              size="sm"
+              onPress={() => navigate(`/users/${user.id}`)}
+            >
+              管理
+            </Button>
+            <Button
+              color="danger"
+              size="sm"
+              onPress={() => deleteUser(user.id)}
+            >
+              删除
+              </Button>
+          </div>
         );
       default:
         return <div>{cellValue}</div>;
@@ -72,7 +87,7 @@ export default function UserList() {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const getUsers = useCallback(() => {
     setLoading(true);
     userApi.getUsers().then((res: User[]) => {
       console.log("user list", res);
@@ -81,6 +96,9 @@ export default function UserList() {
       }
       setLoading(false);
     });
+  }, []);
+  useEffect(()=> {
+    getUsers();
   }, []);
 
   return (

@@ -24,11 +24,11 @@ const columns = [
     key: "title",
     align: "start" as const,
   },
-  {
-    label: "描述",
-    key: "description",
-    align: "start" as const,
-  },
+  // {
+  //   label: "描述",
+  //   key: "description",
+  //   align: "start" as const,
+  // },
   {
     label: "提醒时间",
     key: "remindAt",
@@ -64,6 +64,7 @@ export default function Reminds({ userId }: { userId: string }) {
   }) => {
     try {
       console.log("data", data);
+      data.description = "xxx";
       await userApi.createUserReminder(userId, data);
       setAddModalOpen(false);
       addToast({

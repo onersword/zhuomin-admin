@@ -51,14 +51,7 @@ export default function AddRemindModal({
       });
       return;
     }
-    if (!description.trim()) {
-      addToast({
-        title: "错误",
-        description: "请输入描述",
-        color: "danger",
-      });
-      return;
-    }
+
     if (!remindAt) {
       addToast({
         title: "错误",
@@ -87,7 +80,7 @@ export default function AddRemindModal({
     console.log("date", formatter.format(date));
     console.log("remindAt", moment(date).toISOString());
     setRemindAt(moment(date).toISOString());
-  }, [setDateTime]);
+  }, [dateTime]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -100,12 +93,7 @@ export default function AddRemindModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <Textarea
-              label="描述"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-
+            
             <DatePicker
               hourCycle={24}
               hideTimeZone
