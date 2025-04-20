@@ -173,8 +173,9 @@ export default function Files({ userId }: { userId: string }) {
 
       <UploadFileModal
         isOpen={uploadModalOpen}
-        onConfirm={handleUploadFile}
+        onSuccess={getFiles}
         onOpenChange={setUploadModalOpen}
+        userId={userId}
       />
     </>
   );

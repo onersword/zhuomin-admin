@@ -9,19 +9,23 @@ import {
   Input,
 } from "@heroui/react";
 import { useState } from "react";
+import { userApi } from "@/requests/user";
 
 interface UploadFileModalProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onConfirm: (file: File) => void;
+  onSuccess: () => void;
+  userId: string;
 }
 
 export default function UploadFileModal({
   isOpen,
   onOpenChange,
-  onConfirm,
+  onSuccess,
+  userId,
 }: UploadFileModalProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -38,11 +42,32 @@ export default function UploadFileModal({
     }
   };
 
-  const handleConfirm = () => {
-    if (file) {
-      onConfirm(file);
+  const handleConfirm = async () => {
+    if (!file) return;
+
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      await userApi.uploadUserFile(userId, formData);
+      addToast({
+        title: "成功",
+        description: "文件上传成功",
+        color: "success",
+      });
+      onSuccess();
       setFile(null);
       onOpenChange(false);
+    } catch (error) {
+      console.error("Failed to upload file:", error);
+      addToast({
+        title: "错误",
+        description: "文件上传失败",
+        color: "danger",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -83,6 +108,7 @@ export default function UploadFileModal({
                 color="primary" 
                 onPress={handleConfirm}
                 isDisabled={!file}
+                isLoading={isLoading}
               >
                 上传
               </Button>
