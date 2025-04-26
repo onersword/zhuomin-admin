@@ -1,5 +1,5 @@
 import { Product } from "@/requests/product";
-import { ProductStatus } from "@/types/product";
+import { ProductStatus, ProductType, ProductTypeMap, typeColorMap } from "@/types/product";
 import {
   Modal,
   ModalHeader,
@@ -35,66 +35,106 @@ export function ViewProductModal({
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-12 items-center">
                 <div className="col-span-3">
-                  <span className="text-sm font-medium text-gray-500">产品名称</span>
+                  <span className="text-sm font-medium text-gray-500">
+                    产品名称
+                  </span>
                 </div>
                 <div className="col-span-9">
                   <p className="text-base font-semibold">{product.name}</p>
                 </div>
               </div>
-              
+
               <Divider className="my-1" />
-              
+
               <div className="grid grid-cols-12 items-center">
                 <div className="col-span-3">
-                  <span className="text-sm font-medium text-gray-500">产品价格</span>
+                  <span className="text-sm font-medium text-gray-500">
+                    产品价格
+                  </span>
                 </div>
                 <div className="col-span-9">
                   <p className="text-base font-medium text-primary">
-                    ¥{product.price}{product.unit && `/${product.unit}`}
+                    ¥{product.price}
+                    {product.unit && `/${product.unit}`}
                   </p>
                 </div>
               </div>
-              
+
               <Divider className="my-1" />
-              
+
               <div className="grid grid-cols-12 items-center">
                 <div className="col-span-3">
-                  <span className="text-sm font-medium text-gray-500">产品状态</span>
+                  <span className="text-sm font-medium text-gray-500">
+                    产品类型
+                  </span>
                 </div>
                 <div className="col-span-9">
-                  <span className={`px-2 py-1 rounded-full text-xs ${product.status === ProductStatus.ONLINE ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                  <div className="flex items-center gap-2">
+                    <label
+                      className={`text-white rounded-[4px] text-sm px-2 py-1`}
+                      style={{
+                        backgroundColor: typeColorMap[product.type as ProductType],
+                      }}
+                    >
+                      {ProductTypeMap[product.type as ProductType]}
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <Divider className="my-1" />
+
+              <div className="grid grid-cols-12 items-center">
+                <div className="col-span-3">
+                  <span className="text-sm font-medium text-gray-500">
+                    产品状态
+                  </span>
+                </div>
+                <div className="col-span-9">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${product.status === ProductStatus.ONLINE ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
+                  >
                     {statusMap[product.status as ProductStatus]}
                   </span>
                 </div>
               </div>
-              
+
               {product.description && (
                 <>
                   <Divider className="my-1" />
                   <div className="grid grid-cols-12">
                     <div className="col-span-3">
-                      <span className="text-sm font-medium text-gray-500">产品描述</span>
+                      <span className="text-sm font-medium text-gray-500">
+                        产品描述
+                      </span>
                     </div>
                     <div className="col-span-9">
-                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{product.description}</p>
+                      <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                        {product.description}
+                      </p>
                     </div>
                   </div>
                 </>
               )}
-              
+
               {product.images && product.images.length > 0 && (
                 <>
                   <Divider className="my-1" />
                   <div className="grid grid-cols-12">
                     <div className="col-span-3">
-                      <span className="text-sm font-medium text-gray-500">产品图片</span>
+                      <span className="text-sm font-medium text-gray-500">
+                        产品图片
+                      </span>
                     </div>
                     <div className="col-span-9 flex flex-wrap gap-2">
                       {product.images.map((image, index) => (
-                        <div key={index} className="w-20 h-20 rounded-md overflow-hidden border border-gray-200">
-                          <img 
-                            src={image} 
-                            alt={`产品图片${index + 1}`} 
+                        <div
+                          key={index}
+                          className="w-20 h-20 rounded-md overflow-hidden border border-gray-200"
+                        >
+                          <img
+                            src={image}
+                            alt={`产品图片${index + 1}`}
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -103,29 +143,37 @@ export function ViewProductModal({
                   </div>
                 </>
               )}
-              
+
               <Divider className="my-1" />
-              
+
               <div className="grid grid-cols-12 items-center">
                 <div className="col-span-3">
-                  <span className="text-sm font-medium text-gray-500">创建时间</span>
+                  <span className="text-sm font-medium text-gray-500">
+                    创建时间
+                  </span>
                 </div>
                 <div className="col-span-9">
                   <p className="text-sm text-gray-600">
-                    {product.createdAt ? moment(product.createdAt).format('YYYY-MM-DD HH:mm:ss') : '无'}
+                    {product.createdAt
+                      ? moment(product.createdAt).format("YYYY-MM-DD HH:mm:ss")
+                      : "无"}
                   </p>
                 </div>
               </div>
-              
+
               <Divider className="my-1" />
-              
+
               <div className="grid grid-cols-12 items-center">
                 <div className="col-span-3">
-                  <span className="text-sm font-medium text-gray-500">更新时间</span>
+                  <span className="text-sm font-medium text-gray-500">
+                    更新时间
+                  </span>
                 </div>
                 <div className="col-span-9">
                   <p className="text-sm text-gray-600">
-                    {product.updatedAt ?moment(product.updatedAt).format('YYYY-MM-DD HH:mm:ss'): '无'}
+                    {product.updatedAt
+                      ? moment(product.updatedAt).format("YYYY-MM-DD HH:mm:ss")
+                      : "无"}
                   </p>
                 </div>
               </div>

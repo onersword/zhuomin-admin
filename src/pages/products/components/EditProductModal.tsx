@@ -1,5 +1,5 @@
 import { Product, productApi } from "@/requests/product";
-import { ProductStatus } from "@/types/product";
+import { ProductStatus, ProductType } from "@/types/product";
 import {
   Button,
   Modal,
@@ -21,6 +21,14 @@ const statusOptions = [
   { label: "上架", value: ProductStatus.ONLINE },
 ];
 
+const typeOptions = [
+  { label: "金卡套餐", value: ProductType.Gold },
+  { label: "铂金套餐", value: ProductType.Platinum },
+  { label: "钻石套餐", value: ProductType.Diamond },
+  { label: "其他", value: ProductType.Other },
+];
+
+
 export default function EditProductModal({
   isOpen,
   onOpenChange,
@@ -40,7 +48,7 @@ export default function EditProductModal({
   const [price, setPrice] = useState("");
   const [unit, setUnit] = useState("");
   const [status, setStatus] = useState(ProductStatus.OFFLINE);
-
+  const [type, setType] = useState(ProductType.Gold);
   // 当产品数据变化时更新表单
   useEffect(() => {
     if (product) {
@@ -49,6 +57,7 @@ export default function EditProductModal({
       setPrice(product.price.toString());
       setUnit(product.unit || "");
       setStatus(product.status);
+      setType(product.type);
     }
   }, [product]);
 
@@ -75,6 +84,11 @@ export default function EditProductModal({
       newErrors.push("单位不能为空");
     }
 
+    // 验证产品类型
+    if (!type) {
+      newErrors.push("产品类型不能为空");
+    }
+
     return newErrors;
   };
 
@@ -97,6 +111,7 @@ export default function EditProductModal({
         price: parseFloat(price),
         unit,
         status,
+        type,
       }; 
       const res = await productApi.updateProduct(product.id, productData as any);
       console.log("create product res", res);
@@ -166,6 +181,30 @@ export default function EditProductModal({
                       return true;
                     }}
                   />
+                </div>
+
+
+                <div className="">
+                  <Select
+                    placeholder="请选择产品类型"
+                    label="产品类型"
+                    labelPlacement="outside"
+                    selectedKeys={[type.toString()]}
+                    onChange={(e) => {
+                      setType(parseInt(e.target.value));
+                    }}
+                    variant="bordered"
+                  >
+                    {typeOptions.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        textValue={option.label}
+                        className="hover:!bg-gray-100"
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
                 </div>
                 
                 <div className="flex gap-4">

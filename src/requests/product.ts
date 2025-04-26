@@ -9,6 +9,7 @@ export interface Product {
   price: number;
   unit?: string;
   status: number;
+  type: number;
   images?: string[];
   createdAt?: string;
   updatedAt: string;
@@ -20,6 +21,7 @@ export interface CreateProductData {
   price: number;
   unit: string;
   status: number;
+  type: number;
   images: string[];
 }
 

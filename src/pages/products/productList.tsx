@@ -16,7 +16,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import ChangePriceModal from "./components/ChangePriceModal";
 
-import { ProductStatus } from "@/types/product";
+import { ProductStatus, ProductType, ProductTypeMap, typeColorMap } from "@/types/product";
 import { Product, productApi } from "@/requests/product";
 import { usePagination } from "@/hooks/usePagination";
 import EditProductModal from "./components/EditProductModal";
@@ -31,9 +31,9 @@ const columns = [
     width: 200,
   },
   {
-    label: "产品简介",
-    key: "description",
-    width: 200,
+    label: "产品类型",
+    key: "type",
+    width: 100,
   },
   {
     label: "产品价格",
@@ -50,7 +50,6 @@ const columns = [
   {
     label: "",
     align: "end",
-    width: 200,
     key: "actions",
   },
 ];
@@ -135,6 +134,8 @@ export default function ProductList({ status }: { status: ProductStatus }) {
               {moment(cellValue).format("YYYY-MM-DD HH:mm:ss")}
             </div>
           );
+        case "type":
+          return <div className="flex items-center gap-2"><label className={`text-white rounded-[4px] text-sm px-2 py-1`} style={{ backgroundColor: typeColorMap[cellValue as ProductType] }}>{ProductTypeMap[cellValue as ProductType]}</label></div>;
         case "actions":
           return (
             <div className="flex gap-2 justify-end">

@@ -1,6 +1,6 @@
 import { commonApi } from "@/requests/common";
 import { CreateProductData, productApi } from "@/requests/product";
-import { ProductStatus } from "@/types/product";
+import { ProductStatus, ProductType } from "@/types/product";
 import { CloudArrowUpIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
   Input,
@@ -24,6 +24,13 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 const statusOptions = [
   { label: "下架", value: ProductStatus.OFFLINE },
   { label: "上架", value: ProductStatus.ONLINE },
+];
+
+const typeOptions = [
+  { label: "金卡套餐", value: ProductType.Gold },
+  { label: "铂金套餐", value: ProductType.Platinum },
+  { label: "钻石套餐", value: ProductType.Diamond },
+  { label: "其他", value: ProductType.Other },
 ];
 
 // 定义拖拽项的类型
@@ -117,7 +124,7 @@ export function AddProductModal({
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [valid, setValid] = useState(false);
-
+  const [type, setType] = useState(ProductType.Gold);
   // 创建一个文件输入引用，用于重置和触发文件选择
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -210,6 +217,7 @@ export function AddProductModal({
         price: parseFloat(price),
         unit,
         status,
+        type,
         images: [],
       };
 
@@ -295,6 +303,29 @@ export function AddProductModal({
                       return true;
                     }}
                   />
+                </div>
+
+                <div className="">
+                  <Select
+                    placeholder="请选择产品类型"
+                    label="产品类型"
+                    labelPlacement="outside"
+                    selectedKeys={[type.toString()]}
+                    onChange={(e) => {
+                      setType(parseInt(e.target.value));
+                    }}
+                    variant="bordered"
+                  >
+                    {typeOptions.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        textValue={option.label}
+                        className="hover:!bg-gray-100"
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex-1">
