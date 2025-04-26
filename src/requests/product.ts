@@ -43,4 +43,8 @@ export const productApi = {
     const response = await http.post('/api/products', data);
     return response;
   },
+  deleteProduct: async (id: number) => {
+    const response = await http.delete(`/api/products/${id}`);
+    return response;
+  },
 }; 

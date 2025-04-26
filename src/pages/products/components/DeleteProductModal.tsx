@@ -1,4 +1,4 @@
-import { Product } from "@/requests/product";
+import { Product, productApi } from "@/requests/product";
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
 
 export function DeleteProductModal({
@@ -13,8 +13,10 @@ export function DeleteProductModal({
   product: Product;
 }) {
   const handleConfirm = () => {
-    onConfirm();
-    onOpenChange(false);
+    productApi.deleteProduct(product.id).then(() => {
+      onConfirm();
+      onOpenChange(false);
+    });
   };
 
   return (
