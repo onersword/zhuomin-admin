@@ -81,6 +81,10 @@ export default function ProductsPage() {
       <AddProductModal
         isOpen={addModalOpen}
         onOpenChange={setAddModalOpen}
+        onSuccess={() => {
+          getList();
+          setAddModalOpen(false);
+        }}
       />
     </DefaultLayout>
   );
