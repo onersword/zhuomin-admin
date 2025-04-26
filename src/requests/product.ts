@@ -51,4 +51,8 @@ export const productApi = {
     const response = await http.delete(`/api/products/${id}`);
     return response;
   },
+  updateProduct: async (id: number, data: CreateProductData) => {
+    const response = await http.patch(`/api/products/${id}`, data);
+    return response;
+  },
 }; 

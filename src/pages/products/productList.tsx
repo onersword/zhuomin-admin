@@ -224,6 +224,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
             isOpen={editModalOpen}
             product={selectedProduct}
             onOpenChange={setEditModalOpen}
+            onSuccess={getList}
           />
           <ChangePriceModal
             isOpen={isOpen}
