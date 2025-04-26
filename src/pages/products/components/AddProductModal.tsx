@@ -18,11 +18,83 @@ import {
 } from "@heroui/react";
 import { useRef } from "react";
 import { useState } from "react";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const statusOptions = [
   { label: "下架", value: ProductStatus.OFFLINE },
   { label: "上架", value: ProductStatus.ONLINE },
 ];
+
+// 定义拖拽项的类型
+const ItemTypes = {
+  IMAGE: "image",
+};
+
+// 图片项组件
+const ImageItem = ({ file, index, moveImage, onDelete }: { 
+  file: File; 
+  index: number; 
+  moveImage: (dragIndex: number, hoverIndex: number) => void;
+  onDelete: (index: number) => void;
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [{ isDragging }, drag] = useDrag({
+    type: ItemTypes.IMAGE,
+    item: { index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, drop] = useDrop({
+    accept: ItemTypes.IMAGE,
+    hover: (item: { index: number }, monitor) => {
+      if (!ref.current) return;
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) return;
+
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      if (!clientOffset) return;
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+
+      moveImage(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    },
+  });
+
+  drag(drop(ref));
+
+  return (
+    <div
+      ref={ref}
+      className={`relative group ${isDragging ? "opacity-50" : ""}`}
+    >
+      <img
+        src={URL.createObjectURL(file)}
+        alt={`预览 ${index}`}
+        className="w-24 h-24 object-cover rounded cursor-move"
+      />
+      <button
+        type="button"
+        onClick={() => onDelete(index)}
+        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 
+                flex items-center justify-center w-5 h-5 text-xs font-bold"
+        title="删除图片"
+      >
+        <XMarkIcon className="size-4" />
+      </button>
+    </div>
+  );
+};
 
 export function AddProductModal({
   isOpen,
@@ -101,6 +173,16 @@ export function AddProductModal({
     );
   };
 
+  // 移动图片
+  const moveImage = (dragIndex: number, hoverIndex: number) => {
+    setImageFiles((prevFiles) => {
+      const newFiles = [...prevFiles];
+      const [removed] = newFiles.splice(dragIndex, 1);
+      newFiles.splice(hoverIndex, 0, removed);
+      return newFiles;
+    });
+  };
+
   // 触发文件选择对话框
   const triggerFileInput = () => {
     if (fileInputRef.current) {
@@ -154,7 +236,6 @@ export function AddProductModal({
           color: "success",
         });
         onSuccess();
-
       }
     } catch (error) {
       console.error("创建产品失败", error);
@@ -167,6 +248,7 @@ export function AddProductModal({
       setLoading(false);
     }
   };
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
       <ModalContent>
@@ -294,26 +376,19 @@ export function AddProductModal({
 
                     {/* 显示当前上传的图片 */}
                     {imageFiles.length > 0 && (
-                      <div className="mt-2 flex gap-2 flex-wrap mb-3">
-                        {imageFiles.map((file, index) => (
-                          <div key={index} className="relative group">
-                            <img
-                              src={URL.createObjectURL(file)}
-                              alt={`预览 ${index}`}
-                              className="w-24 h-24 object-cover rounded"
+                      <DndProvider backend={HTML5Backend}>
+                        <div className="mt-2 flex gap-2 flex-wrap mb-3">
+                          {imageFiles.map((file, index) => (
+                            <ImageItem
+                              key={index}
+                              file={file}
+                              index={index}
+                              moveImage={moveImage}
+                              onDelete={handleDeleteImage}
                             />
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteImage(index)}
-                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 
-                                    flex items-center justify-center w-5 h-5 text-xs font-bold"
-                              title="删除图片"
-                            >
-                              <XMarkIcon className="size-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      </DndProvider>
                     )}
 
                     {/* 自定义上传按钮 */}
@@ -327,7 +402,7 @@ export function AddProductModal({
                       上传产品图片
                     </Button>
                     <small className="text-gray-500 mt-1">
-                      支持 JPG、PNG 格式图片
+                      支持 JPG、PNG 格式图片(可拖动排序)
                     </small>
                   </div>
                 </div>
