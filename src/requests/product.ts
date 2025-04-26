@@ -10,6 +10,15 @@ export interface Product {
   updatedAt: string;
 }
 
+export interface CreateProductData {
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
+  status: number;
+  images: string[];
+}
+
 // API endpoints
 export const productApi = {
   // Get all products
@@ -27,6 +36,11 @@ export const productApi = {
     const response = await http.patch(`/api/products/${id}`, {
       price,
     });
+    return response;
+  },
+  // Create a new product
+  createProduct: async (data: CreateProductData) => {
+    const response = await http.post('/api/products', data);
     return response;
   },
 }; 

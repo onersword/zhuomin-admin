@@ -1,11 +1,13 @@
-import { Tab, Tabs } from "@heroui/react";
+import { Button, Tab, Tabs } from "@heroui/react";
 import { useState } from "react";
 
 import ProductList from "./productList";
 
 import DefaultLayout from "@/layouts/default";
 import { ProductStatus } from "@/types/product";
+import { useNavigate } from "react-router-dom";
 export default function ProductsPage() {
+  const navigate = useNavigate();
   const [status, setStatus] = useState<ProductStatus>(ProductStatus.ONLINE);
   const getKeyString = (state: ProductStatus) => {
     return state === ProductStatus.ONLINE ? "online" : "offline";
@@ -13,6 +15,18 @@ export default function ProductsPage() {
 
   return (
     <DefaultLayout>
+      <div>
+      <div className=" pb-3">
+          <Button
+            color="primary"
+            radius="sm"
+            onPress={() => navigate("/products/create")}
+          >
+            创建产品
+          </Button>
+        </div>
+      </div>
+      
       <Tabs
         selectedKey={getKeyString(status)}
         variant="underlined"

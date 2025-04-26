@@ -27,6 +27,11 @@ const columns = [
     width: 200,
   },
   {
+    label: "产品简介",
+    key: "description",
+    width: 200,
+  },
+  {
     label: "产品价格",
     key: "price",
     align: "end",

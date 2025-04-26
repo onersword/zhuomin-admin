@@ -14,7 +14,7 @@ export default function UsersPage() {
           <Button
             color="primary"
             radius="sm"
-            onClick={() => navigate("/users/create")}
+            onPress={() => navigate("/users/create")}
           >
             创建账户&nbsp;|&nbsp;上传用户档案&nbsp;csv格式
           </Button>

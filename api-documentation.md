@@ -36,7 +36,7 @@ POST /api/login
 ### 获取用户列表
 
 ```
-GET /api/users
+GET /api/users?status=2
 ```
 
 响应:
@@ -85,6 +85,19 @@ GET /api/users/{userId}
 DELETE /api/users/{userId}
 ```
 
+### 更新用户状态
+
+```
+PATCH /api/users/{userId}
+```
+
+请求体:
+
+```json
+{
+  "status": 2 // 2-审核通过
+}
+```
 
 ### 获取用户报告
 
@@ -283,6 +296,28 @@ POST /api/users/{userId}/products
 }
 ```
 
+## 图片接口
+
+### 上传图片
+
+例子
+
+```
+curl --location 'http://localhost:3000/api/images' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzQ0NTE0NzYyfQ.8EK6xObqI7y9vHrOrdxptO46DRS8m5OmtGA6UvjBvMU' \
+--form 'file=@"/Users/pp/Downloads/体检报告20240212.pdf"'
+```
+
+响应:
+
+```json
+{
+  "file_id":"cloud://prod-8gvh8k8d1aeb0797.7072-prod-8gvh8k8d1aeb0797-1345362468/files/33e1ef20-a539-4748-9cc2-8f6ec1c5154b/size-guide_CN.png",
+  "download_url":"https://7072-prod-8gvh8k8d1aeb0797-1345362468.tcb.qcloud.la/files/体检报告20240212.pdf",
+}
+```
+
+
 ## 产品接口
 
 ### 获取产品列表
@@ -320,16 +355,33 @@ PATCH /api/products/{productId}
 {
   "price": 1000, // 价格
   "unit": "次", // 单位
-  "status": 0 // 0-下架，1-上架
+  "status": 0, // 0-下架，1-上架
+  "images": ["图片 fid"]
 }
 ```
 
-响应:
+### 删除产品
+
+```
+DELETE /api/products/{productId}
+```
+
+### 添加产品
+
+```
+POST /api/products
+```
+
+请求体:
 
 ```json
 {
-  "id": "产品 ID",
-  "status": 0 // 0-下架，1-上架
+  "name": "产品名称",
+  "description": "产品描述",
+  "price": 1000,
+  "unit": "次",
+  "status": 0,
+  "images": ["图片 fid"]
 }
 ```
 
