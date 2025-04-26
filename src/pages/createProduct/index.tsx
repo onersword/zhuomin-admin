@@ -1,83 +1,111 @@
 import Breadcrumb from "@/components/Breadcrumb";
 import DefaultLayout from "@/layouts/default";
-import { Button, Card, Input, Select, SelectItem, Textarea, useDisclosure } from "@heroui/react";
-import React, { useEffect, useState } from "react";
+import {
+  addToast,
+  Button,
+  Card,
+  Input,
+  Select,
+  SelectItem,
+  Textarea,
+  useDisclosure,
+} from "@heroui/react";
+import React, { useEffect, useRef, useState } from "react";
 import { CreateProductData, productApi } from "@/requests/product";
 import { ProductStatus } from "@/types/product";
 import { commonApi } from "@/requests/common";
 import { useNavigate } from "react-router-dom";
-
-// 表单验证错误类型
-interface FormErrors {
-  name?: string;
-  description?: string;
-  price?: string;
-  unit?: string;
-  images?: string;
-}
-
+import { CloudArrowUpIcon } from "@heroicons/react/24/solid";
 export function CreateProductPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  
+
   // 表单数据
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [unit, setUnit] = useState("次");
   const [status, setStatus] = useState(ProductStatus.OFFLINE);
-  
+
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [valid, setValid] = useState(false);
-  const [errors, setErrors] = useState<FormErrors>({});
 
-  // const validForm = () => {
-  //   const newErrors: FormErrors = {};
-    
-  //   // 验证产品名称
-  //   if (!name) {
-  //     newErrors.name = "产品名称不能为空";
-  //   }
-    
-  //   // 验证产品描述
-  //   if (!description) {
-  //     newErrors.description = "产品简介不能为空";
-  //   }
-    
-  //   // 验证价格
-  //   if (!price) {
-  //     newErrors.price = "价格不能为空";
-  //   } else if (parseFloat(price) <= 0) {
-  //     newErrors.price = "价格必须大于0";
-  //   }
-    
-  //   // 验证单位
-  //   if (!unit) {
-  //     newErrors.unit = "单位不能为空";
-  //   }
-    
-  //   // 验证图片
-  //   if (imageFiles.length === 0) {
-  //     newErrors.images = "请上传至少一张产品图片";
-  //   }
-    
-  //   return newErrors;
+  // 创建一个文件输入引用，用于重置和触发文件选择
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // }
+  const validForm = () => {
+    const newErrors: string[] = [];
 
+    // 验证产品名称
+    if (!name) {
+      newErrors.push("产品名称不能为空");
+    }
 
+    // 验证产品描述
+    if (!description) {
+      newErrors.push("产品简介不能为空");
+    }
+
+    // 验证价格
+    if (!price || Number.isNaN(parseFloat(price))) {
+      newErrors.push("请检查价格");
+    }
+
+    // 验证单位
+    if (!unit) {
+      newErrors.push("单位不能为空");
+    }
+
+    // 验证图片
+    if (imageFiles.length === 0) {
+      newErrors.push("请上传至少一张产品图片");
+    }
+
+    return newErrors;
+  };
+
+  // 处理图片上传
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const fileArray = Array.from(e.target.files);
-      setImageFiles(fileArray);
+      // 添加新图片到现有图片数组
+      setImageFiles((prev) => [...prev, ...fileArray]);
+
+      // 清空文件输入，以便下次可以选择相同的文件
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  // 删除图片
+  const handleDeleteImage = (indexToRemove: number) => {
+    setImageFiles((prevFiles) =>
+      prevFiles.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+  // 触发文件选择对话框
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
   const handleSubmit = async () => {
+    const newErrors = validForm();
+    if (newErrors.length > 0) {
+      addToast({
+        title: "错误",
+        description: newErrors[0],
+        color: "danger",
+      });
+      return;
+    }
     try {
       setLoading(true);
-      
+
       // 构建产品数据
       const productData: CreateProductData = {
         name,
@@ -85,27 +113,41 @@ export function CreateProductPage() {
         price: parseFloat(price),
         unit,
         status,
-        images: []
+        images: [],
       };
-      
+
       // 先上传图片
       if (imageFiles.length > 0) {
         setUploadLoading(true);
-        const uploadPromises = imageFiles.map(file => commonApi.uploadImage(file));
+        const uploadPromises = imageFiles.map((file) =>
+          commonApi.uploadImage(file)
+        );
         const uploadResults = await Promise.all(uploadPromises);
-        
+
         // 提取图片ID
-        const imageIds = uploadResults.map(result => result.file_id);
+        const imageIds = uploadResults.map((result) => result.file_id);
         productData.images = imageIds;
         setUploadLoading(false);
-        
+
         // 创建产品
         const res = await productApi.createProduct(productData);
-        console.log('create product res', res);
+        console.log("create product res", res);
+
+        addToast({
+          title: "成功",
+          description: "产品创建成功",
+          color: "success",
+        });
+
         navigate("/products");
       }
     } catch (error) {
       console.error("创建产品失败", error);
+      addToast({
+        title: "错误",
+        description: "产品创建失败",
+        color: "danger",
+      });
     } finally {
       setLoading(false);
     }
@@ -117,7 +159,7 @@ export function CreateProductPage() {
       <div className="max-w-2xl mt-4">
         <Card className="p-4">
           <h1 className="text-xl font-bold mb-4">创建新产品</h1>
-          
+
           <div className="flex flex-col gap-4">
             <div>
               <Input
@@ -132,13 +174,13 @@ export function CreateProductPage() {
                 type="text"
                 validate={(value) => {
                   if (!value) {
-                    return '产品名称不能为空';
+                    return "产品名称不能为空";
                   }
                   return true;
                 }}
               />
             </div>
-            
+
             <div>
               <Textarea
                 label="产品简介"
@@ -149,10 +191,10 @@ export function CreateProductPage() {
                 onChange={(e) => setDescription(e.target.value)}
                 variant="bordered"
                 className="w-full"
-                errorMessage={'产品简介不能为空'}
+                errorMessage={"产品简介不能为空"}
                 validate={(value) => {
                   if (!value) {
-                    return '产品简介不能为空';
+                    return "产品简介不能为空";
                   }
                   return true;
                 }}
@@ -172,15 +214,18 @@ export function CreateProductPage() {
                   className="w-full"
                   validate={(value) => {
                     if (!value) {
-                      return '价格不能为空';
-                    } else if (Number.isNaN(parseFloat(value)) || parseFloat(value) <= 0) {
-                      return '价格不正确';
+                      return "价格不能为空";
+                    } else if (
+                      Number.isNaN(parseFloat(value)) ||
+                      parseFloat(value) <= 0
+                    ) {
+                      return "价格不正确";
                     }
                     return true;
                   }}
                 />
               </div>
-              
+
               <div className="flex-1">
                 <Input
                   label="单位"
@@ -190,12 +235,10 @@ export function CreateProductPage() {
                   onChange={(e) => setUnit(e.target.value)}
                   variant="bordered"
                   className="w-full"
-                  errorMessage={errors.unit}
-                  isInvalid={!!errors.unit}
                 />
               </div>
             </div>
-            
+
             <div className="">
               <Select
                 placeholder="请选择状态"
@@ -207,49 +250,86 @@ export function CreateProductPage() {
                 }}
                 variant="bordered"
               >
-                <SelectItem key="0" textValue="下架" className="hover:!bg-gray-100" >
+                <SelectItem
+                  key="0"
+                  textValue="下架"
+                  className="hover:!bg-gray-100"
+                >
                   下架
                 </SelectItem>
-                <SelectItem key="1" textValue="上架" className="hover:!bg-gray-100">
+                <SelectItem
+                  key="1"
+                  textValue="上架"
+                  className="hover:!bg-gray-100"
+                >
                   上架
                 </SelectItem>
               </Select>
             </div>
-            
+
             <div>
-              <Input
-                label="产品图片"
-                isRequired
-                labelPlacement="outside"
+              {/* 隐藏真正的文件输入框 */}
+              <input
+                ref={fileInputRef}
                 type="file"
                 multiple
                 onChange={handleImageChange}
-                errorMessage={errors.images}
-                isInvalid={!!errors.images}
+                className="hidden"
+                accept="image/*"
               />
-              
-              {imageFiles.length > 0 && (
-                <div className="mt-2 flex gap-2 flex-wrap">
-                  {imageFiles.map((file, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`预览 ${index}`}
-                        className="w-24 h-24 object-cover rounded"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
+
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium mb-1">
+                  产品图片 <span className="text-red-500">*</span>
+                </label>
+
+                {/* 显示当前上传的图片 */}
+                {imageFiles.length > 0 && (
+                  <div className="mt-2 flex gap-2 flex-wrap mb-3">
+                    {imageFiles.map((file, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`预览 ${index}`}
+                          className="w-24 h-24 object-cover rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteImage(index)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 
+                                    flex items-center justify-center w-5 h-5 text-xs font-bold"
+                          title="删除图片"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 自定义上传按钮 */}
+                <Button
+                  variant="bordered"
+                  color="primary"
+                  onPress={triggerFileInput}
+                  className="mt-1"
+                >
+                  <CloudArrowUpIcon />
+                  上传产品图片
+                </Button>
+                <small className="text-gray-500 mt-1">
+                  支持 JPG、PNG 格式图片{" "}
+                </small>
+              </div>
             </div>
-            
+
             <div className="flex justify-center items-center gap-2 pt-4">
               <Button
-              fullWidth
+                fullWidth
                 color="primary"
                 isLoading={loading || uploadLoading}
                 onPress={handleSubmit}
-                isDisabled={loading || uploadLoading }
+                isDisabled={loading || uploadLoading}
               >
                 创建产品
               </Button>
