@@ -143,7 +143,6 @@ export default function CreateUser() {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [nationality, setNationality] = useState("中国");
-  const [birthDate, setBirthDate] = useState("");
   const [occupation, setOccupation] = useState("");
   const [address, setAddress] = useState("");
   const [idNumber, setIdNumber] = useState("");
@@ -178,16 +177,16 @@ export default function CreateUser() {
   const [sleepQuality, setSleepQuality] = useState<string[]>([]);
   const [sleepHours, setSleepHours] = useState("7");
   
-  const [dateTime, setDateTime] = useState(parseDate("2024-04-04"));
+  const [birthDate, setBirthDate] = useState(parseDate("2024-04-04"));
 
 
   const handleDateTimeChange = (value: any) => {
-    setDateTime(value);
+    setBirthDate(value);
     // 更新出生日期
-    if (value) {
-      const date = value.toString();
-      setBirthDate(date);
-    }
+    // if (value) {
+    //   const date = value.toString();
+    //   setBirthDate(date);
+    // }
   };
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -195,11 +194,11 @@ export default function CreateUser() {
     console.log("Form submitted:", e);
     const data = [];
     //基本信息
-    data.push({ label: '建档日期', value: dateTime.toString()});
+    data.push({ label: '建档日期', value:birthDate.toString()});
     data.push({ label: '姓名', value: name });
     data.push({ label: '性别', value: gender });
     data.push({ label: '国籍/籍贯', value: nationality });
-    data.push({ label: '出生日期', value: birthDate });
+    data.push({ label: '出生日期', value: birthDate.toString() });
     data.push({
       label: '职业',
       value: occupation
@@ -387,7 +386,7 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     className="max-w-sm"
                     label={"出生日期"}
-                    value={dateTime}
+                    value={birthDate}
                     onChange={(e) => handleDateTimeChange(e)}
                     errorMessage="请选择出生日期"
                   />
