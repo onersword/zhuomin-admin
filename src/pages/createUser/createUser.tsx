@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import {
   Button,
   Card,
@@ -180,45 +180,6 @@ export default function CreateUser() {
   
   const [dateTime, setDateTime] = useState(parseDate("2024-04-04"));
 
-  const handleCheckboxChange = (field: string, value: string) => {
-    switch (field) {
-      case "insuranceTypes":
-        setInsuranceTypes(prev => 
-          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
-        );
-        break;
-      case "allergies":
-        setAllergies(prev => 
-          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
-        );
-        break;
-      case "medicalHistory":
-        setMedicalHistory(prev => 
-          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
-        );
-        break;
-      case "smokingHistory":
-        setSmokingHistory(prev => 
-          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
-        );
-        break;
-      case "exerciseHabits":
-        setExerciseHabits(prev => 
-          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
-        );
-        break;
-      case "dietaryHabits":
-        setDietaryHabits(prev => 
-          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
-        );
-        break;
-      case "sleepQuality":
-        setSleepQuality(prev => 
-          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
-        );
-        break;
-    }
-  };
 
   const handleDateTimeChange = (value: any) => {
     setDateTime(value);
@@ -229,8 +190,9 @@ export default function CreateUser() {
     }
   };
   
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Form submitted:", e);
     const data = [];
     //基本信息
     data.push({ label: '建档日期', value: dateTime.toString()});
@@ -374,7 +336,7 @@ export default function CreateUser() {
             <Card className="p-6" fullWidth>
               <h2 className="text-xl font-semibold mb-4">基本信息</h2>
               <div className="flex flex-col gap-4">
-                <div className="mb-4">
+                <div className="mb-4 ">
                   <Input
                     label="姓名"
                     labelPlacement="outside"
@@ -384,24 +346,29 @@ export default function CreateUser() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="请输入姓名"
                     isRequired
+                    errorMessage="请输入姓名"
                   />
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-4 w-[300px]">
                   <RadioGroup
                     label="性别"
                     orientation="horizontal"
                     isRequired
                     value={gender}
                     onValueChange={(value) => setGender(value)}
+                    classNames={{
+                      wrapper: 'grid grid-cols-2 gap-4',
+                    }}
+                    errorMessage="请选择性别"
                   >
                     {radioOptions.gender.map((option) => (
-                      <Radio key={option.value} value={option.value}>{option.label}</Radio>
+                      <Radio className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Radio>
                     ))}
                   </RadioGroup>
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-4 ">
                   <Input
                     label="国籍/籍贯"
                     labelPlacement="outside"
@@ -411,16 +378,18 @@ export default function CreateUser() {
                     onChange={(e) => setNationality(e.target.value)}
                     placeholder="请输入国籍"
                     isRequired
+                    errorMessage="请输入国籍"
                   />
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-4 ">
                   <DatePicker
                     labelPlacement="outside"
                     className="max-w-sm"
                     label={"出生日期"}
                     value={dateTime}
                     onChange={(e) => handleDateTimeChange(e)}
+                    errorMessage="请选择出生日期"
                   />
                 </div>
 
@@ -433,6 +402,7 @@ export default function CreateUser() {
                     onChange={(e) => setOccupation(e.target.value)}
                     variant="bordered"
                     isRequired
+                    errorMessage="请选择职业"
                   >
                     {selectOptions.occupation.map((option) => (
                       <SelectItem key={option.value}>{option.label}</SelectItem>
@@ -449,6 +419,7 @@ export default function CreateUser() {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="请输入家庭地址"
+                    errorMessage="请输入家庭地址"
                   />
                 </div>
 
@@ -462,6 +433,7 @@ export default function CreateUser() {
                     onChange={(e) => setIdNumber(e.target.value)}
                     placeholder="请输入身份证号/护照号"
                     isRequired
+                    errorMessage="请输入身份证号/护照号"
                   />
                 </div>
 
@@ -475,6 +447,7 @@ export default function CreateUser() {
                     onChange={(e) => setEmergencyContact(e.target.value)}
                     placeholder="请输入紧急联系人姓名及关系"
                     isRequired
+                    errorMessage="请输入紧急联系人姓名及关系"
                   />
                 </div>
 
@@ -488,6 +461,7 @@ export default function CreateUser() {
                     onChange={(e) => setEmergencyPhone(e.target.value)}
                     placeholder="请输入紧急联系人电话"
                     isRequired
+                    errorMessage="请输入紧急联系人电话"
                   />
                 </div>
 
@@ -498,9 +472,13 @@ export default function CreateUser() {
                     isRequired
                     value={maritalStatus}
                     onValueChange={(value) => setMaritalStatus(value)}
+                    classNames={{
+                      wrapper: 'grid grid-cols-3 gap-4',
+                    }}
+                    errorMessage="请选择婚姻状况"
                   >
                     {radioOptions.maritalStatus.map((option) => (
-                      <Radio key={option.value} value={option.value}>{option.label}</Radio>
+                      <Radio className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Radio>
                     ))}
                   </RadioGroup>
                 </div>
@@ -512,9 +490,13 @@ export default function CreateUser() {
                     value={insuranceTypes}
                     onValueChange={(values) => setInsuranceTypes(values)}
                     isRequired
+                    classNames={{
+                      wrapper: 'grid grid-cols-3 gap-4',
+                    }}
+                    errorMessage="请选择医疗保险类型"
                   >
                     {checkboxOptions.insurance.map((option) => (
-                      <Checkbox key={option.value} value={option.value}>{option.label}</Checkbox>
+                      <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
                     ))}
                   </CheckboxGroup>
                 </div>
@@ -534,6 +516,7 @@ export default function CreateUser() {
                     value={height}
                     onChange={(e) => setHeight(e.target.value)}
                     placeholder="请输入身高"
+                    errorMessage="请输入身高"
                   />
                 </div>
 
@@ -546,6 +529,7 @@ export default function CreateUser() {
                     value={weight}
                     onChange={(e) => setWeight(e.target.value)}
                     placeholder="请输入体重"
+                    errorMessage="请输入体重"
                   />
                 </div>
 
@@ -558,6 +542,7 @@ export default function CreateUser() {
                     value={waistline}
                     onChange={(e) => setWaistline(e.target.value)}
                     placeholder="请输入腰围"
+                    errorMessage="请输入腰围"
                   />
                 </div>
 
@@ -569,6 +554,7 @@ export default function CreateUser() {
                     selectedKeys={[bloodType]}
                     onChange={(e) => setBloodType(e.target.value)}
                     variant="bordered"
+                    errorMessage="请选择血型"
                   >
                     {selectOptions.bloodType.map((option) => (
                       <SelectItem key={option.value}>{option.label}</SelectItem>
@@ -584,9 +570,10 @@ export default function CreateUser() {
                     selectedKeys={[rhType]}
                     onChange={(e) => setRhType(e.target.value)}
                     variant="bordered"
+                    errorMessage="请选择Rh血型"
                   >
                     {selectOptions.rhType.map((option) => (
-                      <SelectItem className="text-sm" key={option.value}>{option.label}</SelectItem>
+                      <SelectItem key={option.value}>{option.label}</SelectItem>
                     ))}
                   </Select>
                 </div>
@@ -600,6 +587,7 @@ export default function CreateUser() {
                     value={pulse}
                     onChange={(e) => setPulse(e.target.value)}
                     placeholder="请输入脉搏"
+                    errorMessage="请输入脉搏"
                   />
                 </div>
 
@@ -609,6 +597,7 @@ export default function CreateUser() {
                     orientation="horizontal"
                     value={medication}
                     onValueChange={(value) => setMedication(value)}
+                    errorMessage="请选择用药情况"
                   >
                     {radioOptions.medication.map((option) => (
                       <Radio key={option.value} value={option.value}>{option.label}</Radio>
@@ -621,6 +610,7 @@ export default function CreateUser() {
                       onChange={(e) => setMedicationDetail(e.target.value)}
                       placeholder="请描述您的用药情况(药物名称；剂量；复用频率)"
                       variant="bordered"
+                      errorMessage="请描述您的用药情况(药物名称；剂量；复用频率)"
                     />
                   )}
                 </div>
@@ -640,6 +630,7 @@ export default function CreateUser() {
                   classNames={{
                     wrapper: 'grid grid-cols-2 md:grid-cols-3 gap-2',
                   }}
+                  errorMessage="请选择过敏史"
                 >
                   {checkboxOptions.allergies.map((option) => (
                     <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
@@ -659,8 +650,9 @@ export default function CreateUser() {
                   onValueChange={(values) => setMedicalHistory(values)}
                   isRequired
                   classNames={{
-                    wrapper: 'grid grid-cols-2 gap-4',
+                    wrapper: 'grid grid-cols-3 gap-4',
                   }}
+                  errorMessage="请选择既往史"
                 >
                   {checkboxOptions.medicalHistory.map((option) => (
                     <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
@@ -677,6 +669,7 @@ export default function CreateUser() {
                   onChange={(e) => setHospitalizationHistory(e.target.value)}
                   placeholder="无"
                   isRequired
+                  errorMessage="请输入住院史"
                 />
               </div>
             </Card>
@@ -694,6 +687,7 @@ export default function CreateUser() {
                     wrapper: 'grid grid-cols-3 gap-4',
                   }}
                   isRequired
+                  errorMessage="请选择吸烟饮酒史"
                 >
                   {checkboxOptions.smokingHistory.map((option) => (
                     <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
@@ -711,6 +705,7 @@ export default function CreateUser() {
                   classNames={{
                     wrapper: 'grid grid-cols-3 gap-4',
                   }}
+                  errorMessage="请选择运动习惯"
                 >
                   {checkboxOptions.exerciseHabits.map((option) => (
                     <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full" key={option.value} value={option.value}>{option.label}</Checkbox>
@@ -729,6 +724,7 @@ export default function CreateUser() {
                   classNames={{
                     wrapper: 'grid grid-cols-3 gap-4',
                   }}
+                  errorMessage="请选择饮食习惯"
                 >
                   {checkboxOptions.dietaryHabits.map((option) => (
                     <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
@@ -750,6 +746,7 @@ export default function CreateUser() {
                   classNames={{
                     wrapper: 'grid grid-cols-3 gap-4',
                   }}
+                  errorMessage="请选择睡眠质量"
                 >
                   {checkboxOptions.sleepQuality.map((option) => (
                     <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
@@ -767,12 +764,13 @@ export default function CreateUser() {
                   onChange={(e) => setSleepHours(e.target.value)}
                   placeholder="请输入平均每晚睡眠时间（小时）"
                   isRequired
+                  errorMessage="请输入平均每晚睡眠时间（小时）"
                 />
               </div>
             </Card>
 
             <div className="flex justify-center">
-              <Button type="submit" color="primary" className="px-8 py-2">
+              <Button type="submit" color="primary" className="px-8 py-2" >
                 提交
               </Button>
             </div>
