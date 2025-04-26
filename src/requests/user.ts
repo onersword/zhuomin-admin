@@ -102,4 +102,5 @@ export const userApi = {
     const response = await http.post<any>(`/api/users/${userId}/products`, { productId });
     return response;
   },
+  
 };
