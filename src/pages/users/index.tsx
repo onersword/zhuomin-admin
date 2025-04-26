@@ -9,18 +9,15 @@ export default function UsersPage() {
 
   return (
     <DefaultLayout>
+      <Button
+        color="primary"
+        radius="sm"
+        onPress={() => navigate("/users/create")}
+      >
+        创建健康档案
+      </Button>
       <div>
-        <div className="border-b border-gray-200 pb-6">
-          <Button
-            color="primary"
-            radius="sm"
-            onPress={() => navigate("/users/create")}
-          >
-            创建账户&nbsp;|&nbsp;上传用户档案&nbsp;csv格式
-          </Button>
-        </div>
-
-        <div className="mt-4">
+        <div className="mt-4 mb-2">
           <div className="text-[27px]  text-black">用户列表</div>
         </div>
         <UserList />
