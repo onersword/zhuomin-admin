@@ -22,75 +22,194 @@ import { getLocalTimeZone, parseDate, now } from "@internationalized/date";
 import moment from "moment";
 
 export default function CreateUser() {
-  const [formData, setFormData] = useState({
-    // 基本信息
-    name: "",
-    gender: "",
-    nationality: "中国",
-    birthDate: "",
-    occupation: "",
-    address: "",
-    idNumber: "",
-    emergencyContact: "",
-    emergencyPhone: "",
-    maritalStatus: "",
-    insuranceTypes: [] as string[],
-
-    // 健康信息
-    height: "",
-    weight: "",
-    waistline: "",
-    bloodType: "",
-    rhType: "",
-    pulse: "",
-    medication: "无",
-    medicationDetail: "",
-
-    // 过敏史
-    allergies: [] as string[],
-
-    // 病史
-    medicalHistory: [] as string[],
-    hospitalizationHistory: "",
-
-    // 生活习惯
-    smokingHistory: [] as string[],
-    exerciseHabits: [] as string[],
-    dietaryHabits: [] as string[],
-
-    // 睡眠质量
-    sleepQuality: [] as string[],
-    sleepHours: "7",
-  });
+  // 基本信息
+  const [name, setName] = useState("");
+  const [gender, setGender] = useState("");
+  const [nationality, setNationality] = useState("中国");
+  const [birthDate, setBirthDate] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [address, setAddress] = useState("");
+  const [idNumber, setIdNumber] = useState("");
+  const [emergencyContact, setEmergencyContact] = useState("");
+  const [emergencyPhone, setEmergencyPhone] = useState("");
+  const [maritalStatus, setMaritalStatus] = useState("");
+  const [insuranceTypes, setInsuranceTypes] = useState<string[]>([]);
+  
+  // 健康信息
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [waistline, setWaistline] = useState("");
+  const [bloodType, setBloodType] = useState("");
+  const [rhType, setRhType] = useState("");
+  const [pulse, setPulse] = useState("");
+  const [medication, setMedication] = useState("无");
+  const [medicationDetail, setMedicationDetail] = useState("");
+  
+  // 过敏史
+  const [allergies, setAllergies] = useState<string[]>([]);
+  
+  // 病史
+  const [medicalHistory, setMedicalHistory] = useState<string[]>([]);
+  const [hospitalizationHistory, setHospitalizationHistory] = useState("");
+  
+  // 生活习惯
+  const [smokingHistory, setSmokingHistory] = useState<string[]>([]);
+  const [exerciseHabits, setExerciseHabits] = useState<string[]>([]);
+  const [dietaryHabits, setDietaryHabits] = useState<string[]>([]);
+  
+  // 睡眠质量
+  const [sleepQuality, setSleepQuality] = useState<string[]>([]);
+  const [sleepHours, setSleepHours] = useState("7");
+  
   const [dateTime, setDateTime] = useState(parseDate("2024-04-04"));
 
-  const handleInputChange = (field: string, value: string | string[]) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
   const handleCheckboxChange = (field: string, value: string) => {
-    setFormData((prev) => {
-      const currentValues = prev[field as keyof typeof prev] as string[];
-      const newValues = currentValues.includes(value)
-        ? currentValues.filter((v) => v !== value)
-        : [...currentValues, value];
-      return {
-        ...prev,
-        [field]: newValues,
-      };
-    });
+    switch (field) {
+      case "insuranceTypes":
+        setInsuranceTypes(prev => 
+          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+        );
+        break;
+      case "allergies":
+        setAllergies(prev => 
+          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+        );
+        break;
+      case "medicalHistory":
+        setMedicalHistory(prev => 
+          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+        );
+        break;
+      case "smokingHistory":
+        setSmokingHistory(prev => 
+          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+        );
+        break;
+      case "exerciseHabits":
+        setExerciseHabits(prev => 
+          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+        );
+        break;
+      case "dietaryHabits":
+        setDietaryHabits(prev => 
+          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+        );
+        break;
+      case "sleepQuality":
+        setSleepQuality(prev => 
+          prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+        );
+        break;
+    }
   };
 
   const handleDateTimeChange = (value: any) => {
     setDateTime(value);
+    // 更新出生日期
+    if (value) {
+      const date = value.toString();
+      setBirthDate(date);
+    }
   };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const data = [];
+    //基本信息
+    data.push({ label: '建档日期', value: dateTime.toString()});
+    data.push({ label: '姓名', value: name });
+    data.push({ label: '性别', value: gender });
+    data.push({ label: '国籍/籍贯', value: nationality });
+    data.push({ label: '出生日期', value: birthDate });
+    data.push({
+      label: '职业',
+      value: occupation
+    });
+    data.push({ label: '地址', value: address });
+    data.push({ label: '身份证号/护照号', value: idNumber });
+    data.push({ label: '紧急联系人/关系', value: emergencyContact });
+    data.push({ label: '紧急联系人电话', value: emergencyPhone });
+    data.push({ label: '婚姻状况', value: maritalStatus });
+
+    // 医疗保险类型
+    data.push({
+      label: '医疗保险类型',
+      value: insuranceTypes.join(',')
+    });
+    // 基本信息结束
+
+    // 健康信息
+    if (height) {
+      data.push({ label: '身高', value: height + 'cm' });
+    }
+    if (weight) {
+      data.push({ label: '体重', value: weight + 'kg' });
+    }
+    if (waistline) {
+      data.push({ label: '腰围', value: waistline + 'cm' });
+    }
+    if (bloodType) {
+      data.push({
+        label: '血型',
+        value: bloodType
+      });
+    }
+    if (rhType) {
+      data.push({
+        label: 'Rh血型',
+        value: rhType
+      });
+    }
+    if (pulse) {
+      data.push({ label: '脉搏', value: pulse + '次/分' });
+    }
+    const medicationObj = {
+      label: '用药情况',
+      value: '无',
+    }
+    if (medication === '有') {
+      medicationObj.value = medicationDetail || '无';
+    }
+    data.push(medicationObj);
+    // 过敏史
+    data.push({
+      label: '过敏史',
+      value: allergies.join(',')
+    });
+
+    // 既往史
+    data.push({
+      label: '既往史',
+      value: medicalHistory.join(',')
+    });
+
+    data.push({ label: '住院史', value: hospitalizationHistory || '无' });
+
+    // 生活习惯
+    data.push({
+      label: '吸烟饮酒史',
+      value: smokingHistory.join(',')
+    });
+
+    data.push({
+      label: '运动习惯',
+      value: exerciseHabits.join(',')
+    });
+
+    data.push({
+      label: '饮食习惯',
+      value: dietaryHabits.join(',')
+    });
+
+    data.push({
+      label: '睡眠质量',
+      value: sleepQuality.join(',')
+    });
+
+    data.push({ label: '睡眠时间', value: sleepHours + '小时' });
+
     // TODO: 实现表单提交逻辑
-    console.log("Form submitted:", formData);
+    console.log("Form submitted:", data);
   };
 
   const occupationOptions = [
@@ -119,6 +238,38 @@ export default function CreateUser() {
     { label: "Rh阴性", value: "Rh阴性" },
   ];
 
+  const submit = () => {
+    console.log("Form submitted:", {
+      name,
+      gender,
+      nationality,
+      birthDate,
+      occupation,
+      address,
+      idNumber,
+      emergencyContact,
+      emergencyPhone,
+      maritalStatus,
+      insuranceTypes,
+      height,
+      weight,
+      waistline,
+      bloodType,
+      rhType,
+      pulse,
+      medication,
+      medicationDetail,
+      allergies,
+      medicalHistory,
+      hospitalizationHistory,
+      smokingHistory,
+      exerciseHabits,
+      dietaryHabits,
+      sleepQuality,
+      sleepHours
+    });
+  };
+
   return (
     <DefaultLayout>
       <div className="p-4">
@@ -138,8 +289,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="请输入姓名"
                     isRequired
                   />
@@ -150,10 +301,8 @@ export default function CreateUser() {
                     label="性别"
                     orientation="horizontal"
                     isRequired
-                    value={formData.gender}
-                    onValueChange={(value) =>
-                      handleInputChange("gender", value)
-                    }
+                    value={gender}
+                    onValueChange={(value) => setGender(value)}
                   >
                     <Radio value="男">男</Radio>
                     <Radio value="女">女</Radio>
@@ -166,10 +315,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="text"
-                    value={formData.nationality}
-                    onChange={(e) =>
-                      handleInputChange("nationality", e.target.value)
-                    }
+                    value={nationality}
+                    onChange={(e) => setNationality(e.target.value)}
                     placeholder="请输入国籍"
                     isRequired
                   />
@@ -190,10 +337,8 @@ export default function CreateUser() {
                     label="职业"
                     labelPlacement="outside"
                     placeholder="请选择职业"
-                    selectedKeys={[formData.occupation]}
-                    onChange={(e) =>
-                      handleInputChange("occupation", e.target.value)
-                    }
+                    selectedKeys={[occupation]}
+                    onChange={(e) => setOccupation(e.target.value)}
                     variant="bordered"
                     isRequired
                   >
@@ -209,10 +354,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="text"
-                    value={formData.address}
-                    onChange={(e) =>
-                      handleInputChange("address", e.target.value)
-                    }
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                     placeholder="请输入家庭地址"
                   />
                 </div>
@@ -223,10 +366,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="text"
-                    value={formData.idNumber}
-                    onChange={(e) =>
-                      handleInputChange("idNumber", e.target.value)
-                    }
+                    value={idNumber}
+                    onChange={(e) => setIdNumber(e.target.value)}
                     placeholder="请输入身份证号/护照号"
                     isRequired
                   />
@@ -238,10 +379,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="text"
-                    value={formData.emergencyContact}
-                    onChange={(e) =>
-                      handleInputChange("emergencyContact", e.target.value)
-                    }
+                    value={emergencyContact}
+                    onChange={(e) => setEmergencyContact(e.target.value)}
                     placeholder="请输入紧急联系人姓名及关系"
                     isRequired
                   />
@@ -253,10 +392,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="text"
-                    value={formData.emergencyPhone}
-                    onChange={(e) =>
-                      handleInputChange("emergencyPhone", e.target.value)
-                    }
+                    value={emergencyPhone}
+                    onChange={(e) => setEmergencyPhone(e.target.value)}
                     placeholder="请输入紧急联系人电话"
                     isRequired
                   />
@@ -267,10 +404,8 @@ export default function CreateUser() {
                     label="婚姻状况"
                     orientation="horizontal"
                     isRequired
-                    value={formData.maritalStatus}
-                    onValueChange={(value) =>
-                      handleInputChange("maritalStatus", value)
-                    }
+                    value={maritalStatus}
+                    onValueChange={(value) => setMaritalStatus(value)}
                   >
                     <Radio value="已婚">已婚</Radio>
                     <Radio value="未婚">未婚</Radio>
@@ -282,10 +417,8 @@ export default function CreateUser() {
                   <CheckboxGroup
                     label="医疗保险类型"
                     orientation="horizontal"
-                    value={formData.insuranceTypes}
-                    onValueChange={(values) =>
-                      handleInputChange("insuranceTypes", values)
-                    }
+                    value={insuranceTypes}
+                    onValueChange={(values) => setInsuranceTypes(values)}
                     isRequired
                   >
                     <Checkbox value="医保">医保</Checkbox>
@@ -307,10 +440,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="number"
-                    value={formData.height}
-                    onChange={(e) =>
-                      handleInputChange("height", e.target.value)
-                    }
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
                     placeholder="请输入身高"
                   />
                 </div>
@@ -321,10 +452,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="number"
-                    value={formData.weight}
-                    onChange={(e) =>
-                      handleInputChange("weight", e.target.value)
-                    }
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
                     placeholder="请输入体重"
                   />
                 </div>
@@ -335,10 +464,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="number"
-                    value={formData.waistline}
-                    onChange={(e) =>
-                      handleInputChange("waistline", e.target.value)
-                    }
+                    value={waistline}
+                    onChange={(e) => setWaistline(e.target.value)}
                     placeholder="请输入腰围"
                   />
                 </div>
@@ -348,10 +475,8 @@ export default function CreateUser() {
                     label="血型"
                     labelPlacement="outside"
                     placeholder="选择血型"
-                    selectedKeys={[formData.bloodType]}
-                    onChange={(e) =>
-                      handleInputChange("bloodType", e.target.value)
-                    }
+                    selectedKeys={[bloodType]}
+                    onChange={(e) => setBloodType(e.target.value)}
                     variant="bordered"
                   >
                     {bloodTypeOptions.map((option) => (
@@ -365,10 +490,8 @@ export default function CreateUser() {
                     label="Rh血型"
                     labelPlacement="outside"
                     placeholder="选择Rh血型"
-                    selectedKeys={[formData.rhType]}
-                    onChange={(e) =>
-                      handleInputChange("rhType", e.target.value)
-                    }
+                    selectedKeys={[rhType]}
+                    onChange={(e) => setRhType(e.target.value)}
                     variant="bordered"
                   >
                     {rhTypeOptions.map((option) => (
@@ -383,8 +506,8 @@ export default function CreateUser() {
                     labelPlacement="outside"
                     variant="bordered"
                     type="number"
-                    value={formData.pulse}
-                    onChange={(e) => handleInputChange("pulse", e.target.value)}
+                    value={pulse}
+                    onChange={(e) => setPulse(e.target.value)}
                     placeholder="请输入脉搏"
                   />
                 </div>
@@ -393,21 +516,17 @@ export default function CreateUser() {
                   <RadioGroup
                     label="用药情况"
                     orientation="horizontal"
-                    value={formData.medication}
-                    onValueChange={(value) =>
-                      handleInputChange("medication", value)
-                    }
+                    value={medication}
+                    onValueChange={(value) => setMedication(value)}
                   >
                     <Radio value="无">无</Radio>
                     <Radio value="有">有</Radio>
                   </RadioGroup>
-                  {formData.medication === "有" && (
+                  {medication === "有" && (
                     <Textarea
                       className="w-full mt-2"
-                      value={formData.medicationDetail}
-                      onChange={(e) =>
-                        handleInputChange("medicationDetail", e.target.value)
-                      }
+                      value={medicationDetail}
+                      onChange={(e) => setMedicationDetail(e.target.value)}
                       placeholder="请描述您的用药情况(药物名称；剂量；复用频率)"
                       variant="bordered"
                     />
@@ -423,10 +542,8 @@ export default function CreateUser() {
                 <CheckboxGroup
                   label="过敏史"
                   orientation="horizontal"
-                  value={formData.allergies}
-                  onValueChange={(values) =>
-                    handleInputChange("allergies", values)
-                  }
+                  value={allergies}
+                  onValueChange={(values) => setAllergies(values)}
                   isRequired
                   className="grid grid-cols-2 md:grid-cols-3 gap-2"
                 >
@@ -450,10 +567,8 @@ export default function CreateUser() {
                 <CheckboxGroup
                   label="既往史"
                   orientation="horizontal"
-                  value={formData.medicalHistory}
-                  onValueChange={(values) =>
-                    handleInputChange("medicalHistory", values)
-                  }
+                  value={medicalHistory}
+                  onValueChange={(values) => setMedicalHistory(values)}
                   isRequired
                   className="grid grid-cols-2 gap-2"
                 >
@@ -485,10 +600,8 @@ export default function CreateUser() {
                   label="住院史"
                   labelPlacement="outside"
                   variant="bordered"
-                  value={formData.hospitalizationHistory}
-                  onChange={(e) =>
-                    handleInputChange("hospitalizationHistory", e.target.value)
-                  }
+                  value={hospitalizationHistory}
+                  onChange={(e) => setHospitalizationHistory(e.target.value)}
                   placeholder="无"
                   isRequired
                 />
@@ -502,10 +615,8 @@ export default function CreateUser() {
                 <CheckboxGroup
                   label="吸烟饮酒史"
                   orientation="horizontal"
-                  value={formData.smokingHistory}
-                  onValueChange={(values) =>
-                    handleInputChange("smokingHistory", values)
-                  }
+                  value={smokingHistory}
+                  onValueChange={(values) => setSmokingHistory(values)}
                   isRequired
                   className="grid grid-cols-2 gap-2"
                 >
@@ -520,10 +631,8 @@ export default function CreateUser() {
                 <CheckboxGroup
                   label="运动习惯"
                   orientation="horizontal"
-                  value={formData.exerciseHabits}
-                  onValueChange={(values) =>
-                    handleInputChange("exerciseHabits", values)
-                  }
+                  value={exerciseHabits}
+                  onValueChange={(values) => setExerciseHabits(values)}
                   isRequired
                   className="grid grid-cols-2 gap-2"
                 >
@@ -540,10 +649,8 @@ export default function CreateUser() {
                 <CheckboxGroup
                   label="饮食习惯"
                   orientation="horizontal"
-                  value={formData.dietaryHabits}
-                  onValueChange={(values) =>
-                    handleInputChange("dietaryHabits", values)
-                  }
+                  value={dietaryHabits}
+                  onValueChange={(values) => setDietaryHabits(values)}
                   isRequired
                   className="grid grid-cols-2 gap-2"
                 >
@@ -567,10 +674,8 @@ export default function CreateUser() {
                 <CheckboxGroup
                   label="睡眠质量"
                   orientation="horizontal"
-                  value={formData.sleepQuality}
-                  onValueChange={(values) =>
-                    handleInputChange("sleepQuality", values)
-                  }
+                  value={sleepQuality}
+                  onValueChange={(values) => setSleepQuality(values)}
                   isRequired
                   className="grid grid-cols-2 gap-2"
                 >
@@ -586,10 +691,8 @@ export default function CreateUser() {
                   labelPlacement="outside"
                   variant="bordered"
                   type="number"
-                  value={formData.sleepHours}
-                  onChange={(e) =>
-                    handleInputChange("sleepHours", e.target.value)
-                  }
+                  value={sleepHours}
+                  onChange={(e) => setSleepHours(e.target.value)}
                   placeholder="请输入平均每晚睡眠时间（小时）"
                   isRequired
                 />
