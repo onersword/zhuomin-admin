@@ -21,6 +21,123 @@ import Breadcrumb from "@/components/Breadcrumb";
 import { getLocalTimeZone, parseDate, now } from "@internationalized/date";
 import moment from "moment";
 
+// 下拉选择框选项配置
+const selectOptions = {
+  occupation: [
+    { label: "请选择职业", value: "" },
+    { label: "医生", value: "医生" },
+    { label: "教师", value: "教师" },
+    { label: "工程师", value: "工程师" },
+    { label: "公务员", value: "公务员" },
+    { label: "销售", value: "销售" },
+    { label: "学生", value: "学生" },
+    { label: "自由职业", value: "自由职业" },
+    { label: "其他", value: "其他" },
+  ],
+  bloodType: [
+    { label: "选择血型", value: "" },
+    { label: "A型", value: "A型" },
+    { label: "B型", value: "B型" },
+    { label: "AB型", value: "AB型" },
+    { label: "O型", value: "O型" },
+  ],
+  rhType: [
+    { label: "选择Rh血型", value: "" },
+    { label: "Rh阳性", value: "Rh阳性" },
+    { label: "Rh阴性", value: "Rh阴性" },
+  ],
+};
+
+// 复选框选项配置
+const checkboxOptions = {
+  insurance: [
+    { label: "医保", value: "医保" },
+    { label: "自费", value: "自费" },
+    { label: "商保", value: "商保" },
+    { label: "其他", value: "其他" },
+  ],
+  allergies: [
+    { label: "无", value: "无" },
+    { label: "头孢菌素", value: "头孢菌素" },
+    { label: "海鲜", value: "海鲜" },
+    { label: "坚果", value: "坚果" },
+    { label: "青霉素", value: "青霉素" },
+    { label: "磺胺类药物", value: "磺胺类药物" },
+    { label: "花粉", value: "花粉" },
+    { label: "牛奶", value: "牛奶" },
+    { label: "其他", value: "其他" },
+  ],
+  medicalHistory: [
+    { label: "无", value: "无" },
+    { label: "糖尿病", value: "糖尿病" },
+    { label: "高血压", value: "高血压" },
+    { label: "高血脂", value: "高血脂" },
+    { label: "高尿酸", value: "高尿酸" },
+    { label: "冠心病", value: "冠心病" },
+    { label: "脑卒中", value: "脑卒中" },
+    { label: "恶性肿瘤", value: "恶性肿瘤" },
+    { label: "慢性阻塞性肺疾病", value: "慢性阻塞性肺疾病" },
+    { label: "乙肝", value: "乙肝" },
+    { label: "心律失常", value: "心律失常" },
+    { label: "甲状腺疾病", value: "甲状腺疾病" },
+    { label: "肾脏疾病", value: "肾脏疾病" },
+    { label: "胃肠道疾病", value: "胃肠道疾病" },
+    { label: "精神疾病", value: "精神疾病" },
+    { label: "过敏史", value: "过敏史" },
+    { label: "脂肪肝", value: "脂肪肝" },
+    { label: "胆结石", value: "胆结石" },
+    { label: "肝脾肿", value: "肝脾肿" },
+    { label: "其他", value: "其他" },
+  ],
+  smokingHistory: [
+    { label: "无", value: "无" },
+    { label: "长期吸烟", value: "长期吸烟" },
+    { label: "长期饮酒", value: "长期饮酒" },
+    { label: "戒烟戒酒史", value: "戒烟戒酒史" },
+  ],
+  exerciseHabits: [
+    { label: "基本不运动", value: "基本不运动" },
+    { label: "每日步行", value: "每日步行" },
+    { label: "长跑", value: "长跑" },
+    { label: "游泳", value: "游泳" },
+    { label: "登山", value: "登山" },
+    { label: "其他", value: "其他" },
+  ],
+  dietaryHabits: [
+    { label: "三餐规律", value: "三餐规律" },
+    { label: "清淡", value: "清淡" },
+    { label: "偏咸", value: "偏咸" },
+    { label: "辛辣", value: "辛辣" },
+    { label: "喜甜食", value: "喜甜食" },
+    { label: "口味偏重", value: "口味偏重" },
+    { label: "应酬多", value: "应酬多" },
+    { label: "三餐不规律", value: "三餐不规律" },
+    { label: "其他", value: "其他" },
+  ],
+  sleepQuality: [
+    { label: "好", value: "好" },
+    { label: "有失眠", value: "有失眠" },
+    { label: "有鼾症", value: "有鼾症" },
+  ],
+};
+
+// 单选框选项配置
+const radioOptions = {
+  gender: [
+    { label: "男", value: "男" },
+    { label: "女", value: "女" },
+  ],
+  maritalStatus: [
+    { label: "已婚", value: "已婚" },
+    { label: "未婚", value: "未婚" },
+    { label: "离异或丧偶", value: "离异或丧偶" },
+  ],
+  medication: [
+    { label: "无", value: "无" },
+    { label: "有", value: "有" },
+  ],
+};
+
 export default function CreateUser() {
   // 基本信息
   const [name, setName] = useState("");
@@ -212,32 +329,6 @@ export default function CreateUser() {
     console.log("Form submitted:", data);
   };
 
-  const occupationOptions = [
-    { label: "请选择职业", value: "" },
-    { label: "医生", value: "医生" },
-    { label: "教师", value: "教师" },
-    { label: "工程师", value: "工程师" },
-    { label: "公务员", value: "公务员" },
-    { label: "销售", value: "销售" },
-    { label: "学生", value: "学生" },
-    { label: "自由职业", value: "自由职业" },
-    { label: "其他", value: "其他" },
-  ];
-
-  const bloodTypeOptions = [
-    { label: "选择血型", value: "" },
-    { label: "A型", value: "A型" },
-    { label: "B型", value: "B型" },
-    { label: "AB型", value: "AB型" },
-    { label: "O型", value: "O型" },
-  ];
-
-  const rhTypeOptions = [
-    { label: "选择Rh血型", value: "" },
-    { label: "Rh阳性", value: "Rh阳性" },
-    { label: "Rh阴性", value: "Rh阴性" },
-  ];
-
   const submit = () => {
     console.log("Form submitted:", {
       name,
@@ -280,9 +371,9 @@ export default function CreateUser() {
 
           <Form onSubmit={handleSubmit} className="space-y-8">
             {/* 基本信息部分 */}
-            <Card className="p-6">
+            <Card className="p-6" fullWidth>
               <h2 className="text-xl font-semibold mb-4">基本信息</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-4">
                 <div className="mb-4">
                   <Input
                     label="姓名"
@@ -304,8 +395,9 @@ export default function CreateUser() {
                     value={gender}
                     onValueChange={(value) => setGender(value)}
                   >
-                    <Radio value="男">男</Radio>
-                    <Radio value="女">女</Radio>
+                    {radioOptions.gender.map((option) => (
+                      <Radio key={option.value} value={option.value}>{option.label}</Radio>
+                    ))}
                   </RadioGroup>
                 </div>
 
@@ -342,7 +434,7 @@ export default function CreateUser() {
                     variant="bordered"
                     isRequired
                   >
-                    {occupationOptions.map((option) => (
+                    {selectOptions.occupation.map((option) => (
                       <SelectItem key={option.value}>{option.label}</SelectItem>
                     ))}
                   </Select>
@@ -407,9 +499,9 @@ export default function CreateUser() {
                     value={maritalStatus}
                     onValueChange={(value) => setMaritalStatus(value)}
                   >
-                    <Radio value="已婚">已婚</Radio>
-                    <Radio value="未婚">未婚</Radio>
-                    <Radio value="离异或丧偶">离异或丧偶</Radio>
+                    {radioOptions.maritalStatus.map((option) => (
+                      <Radio key={option.value} value={option.value}>{option.label}</Radio>
+                    ))}
                   </RadioGroup>
                 </div>
 
@@ -421,19 +513,18 @@ export default function CreateUser() {
                     onValueChange={(values) => setInsuranceTypes(values)}
                     isRequired
                   >
-                    <Checkbox value="医保">医保</Checkbox>
-                    <Checkbox value="自费">自费</Checkbox>
-                    <Checkbox value="商保">商保</Checkbox>
-                    <Checkbox value="其他">其他</Checkbox>
+                    {checkboxOptions.insurance.map((option) => (
+                      <Checkbox key={option.value} value={option.value}>{option.label}</Checkbox>
+                    ))}
                   </CheckboxGroup>
                 </div>
               </div>
             </Card>
 
             {/* 健康信息部分 */}
-            <Card className="p-6">
+            <Card className="p-6" fullWidth>
               <h2 className="text-xl font-semibold mb-4">健康信息</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-4">
                 <div className="mb-4">
                   <Input
                     label="身高 (厘米)"
@@ -479,7 +570,7 @@ export default function CreateUser() {
                     onChange={(e) => setBloodType(e.target.value)}
                     variant="bordered"
                   >
-                    {bloodTypeOptions.map((option) => (
+                    {selectOptions.bloodType.map((option) => (
                       <SelectItem key={option.value}>{option.label}</SelectItem>
                     ))}
                   </Select>
@@ -494,8 +585,8 @@ export default function CreateUser() {
                     onChange={(e) => setRhType(e.target.value)}
                     variant="bordered"
                   >
-                    {rhTypeOptions.map((option) => (
-                      <SelectItem key={option.value}>{option.label}</SelectItem>
+                    {selectOptions.rhType.map((option) => (
+                      <SelectItem className="text-sm" key={option.value}>{option.label}</SelectItem>
                     ))}
                   </Select>
                 </div>
@@ -519,8 +610,9 @@ export default function CreateUser() {
                     value={medication}
                     onValueChange={(value) => setMedication(value)}
                   >
-                    <Radio value="无">无</Radio>
-                    <Radio value="有">有</Radio>
+                    {radioOptions.medication.map((option) => (
+                      <Radio key={option.value} value={option.value}>{option.label}</Radio>
+                    ))}
                   </RadioGroup>
                   {medication === "有" && (
                     <Textarea
@@ -536,7 +628,7 @@ export default function CreateUser() {
             </Card>
 
             {/* 过敏史部分 */}
-            <Card className="p-6">
+            <Card className="p-6" fullWidth>
               <h2 className="text-xl font-semibold mb-4">药物或食物过敏史</h2>
               <div className="mb-4">
                 <CheckboxGroup
@@ -545,23 +637,19 @@ export default function CreateUser() {
                   value={allergies}
                   onValueChange={(values) => setAllergies(values)}
                   isRequired
-                  className="grid grid-cols-2 md:grid-cols-3 gap-2"
+                  classNames={{
+                    wrapper: 'grid grid-cols-2 md:grid-cols-3 gap-2',
+                  }}
                 >
-                  <Checkbox value="无">无</Checkbox>
-                  <Checkbox value="头孢菌素">头孢菌素</Checkbox>
-                  <Checkbox value="海鲜">海鲜</Checkbox>
-                  <Checkbox value="坚果">坚果</Checkbox>
-                  <Checkbox value="青霉素">青霉素</Checkbox>
-                  <Checkbox value="磺胺类药物">磺胺类药物</Checkbox>
-                  <Checkbox value="花粉">花粉</Checkbox>
-                  <Checkbox value="牛奶">牛奶</Checkbox>
-                  <Checkbox value="其他">其他</Checkbox>
+                  {checkboxOptions.allergies.map((option) => (
+                    <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
+                  ))}
                 </CheckboxGroup>
               </div>
             </Card>
 
             {/* 病史部分 */}
-            <Card className="p-6">
+            <Card className="p-6" fullWidth>
               <h2 className="text-xl font-semibold mb-4">病史</h2>
               <div className="mb-4">
                 <CheckboxGroup
@@ -570,28 +658,13 @@ export default function CreateUser() {
                   value={medicalHistory}
                   onValueChange={(values) => setMedicalHistory(values)}
                   isRequired
-                  className="grid grid-cols-2 gap-2"
+                  classNames={{
+                    wrapper: 'grid grid-cols-2 gap-4',
+                  }}
                 >
-                  <Checkbox value="无">无</Checkbox>
-                  <Checkbox value="糖尿病">糖尿病</Checkbox>
-                  <Checkbox value="高血压">高血压</Checkbox>
-                  <Checkbox value="高血脂">高血脂</Checkbox>
-                  <Checkbox value="高尿酸">高尿酸</Checkbox>
-                  <Checkbox value="冠心病">冠心病</Checkbox>
-                  <Checkbox value="脑卒中">脑卒中</Checkbox>
-                  <Checkbox value="恶性肿瘤">恶性肿瘤</Checkbox>
-                  <Checkbox value="慢性阻塞性肺疾病">慢性阻塞性肺疾病</Checkbox>
-                  <Checkbox value="乙肝">乙肝</Checkbox>
-                  <Checkbox value="心律失常">心律失常</Checkbox>
-                  <Checkbox value="甲状腺疾病">甲状腺疾病</Checkbox>
-                  <Checkbox value="肾脏疾病">肾脏疾病</Checkbox>
-                  <Checkbox value="胃肠道疾病">胃肠道疾病</Checkbox>
-                  <Checkbox value="精神疾病">精神疾病</Checkbox>
-                  <Checkbox value="过敏史">过敏史</Checkbox>
-                  <Checkbox value="脂肪肝">脂肪肝</Checkbox>
-                  <Checkbox value="胆结石">胆结石</Checkbox>
-                  <Checkbox value="肝脾肿">肝脾肿</Checkbox>
-                  <Checkbox value="其他">其他</Checkbox>
+                  {checkboxOptions.medicalHistory.map((option) => (
+                    <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
+                  ))}
                 </CheckboxGroup>
               </div>
 
@@ -609,7 +682,7 @@ export default function CreateUser() {
             </Card>
 
             {/* 生活习惯部分 */}
-            <Card className="p-6">
+            <Card className="p-6" fullWidth>
               <h2 className="text-xl font-semibold mb-4">生活习惯</h2>
               <div className="mb-4">
                 <CheckboxGroup
@@ -617,13 +690,14 @@ export default function CreateUser() {
                   orientation="horizontal"
                   value={smokingHistory}
                   onValueChange={(values) => setSmokingHistory(values)}
+                  classNames={{
+                    wrapper: 'grid grid-cols-3 gap-4',
+                  }}
                   isRequired
-                  className="grid grid-cols-2 gap-2"
                 >
-                  <Checkbox value="无">无</Checkbox>
-                  <Checkbox value="长期吸烟">长期吸烟</Checkbox>
-                  <Checkbox value="长期饮酒">长期饮酒</Checkbox>
-                  <Checkbox value="戒烟戒酒史">戒烟戒酒史</Checkbox>
+                  {checkboxOptions.smokingHistory.map((option) => (
+                    <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
+                  ))}
                 </CheckboxGroup>
               </div>
 
@@ -634,16 +708,16 @@ export default function CreateUser() {
                   value={exerciseHabits}
                   onValueChange={(values) => setExerciseHabits(values)}
                   isRequired
-                  className="grid grid-cols-2 gap-2"
+                  classNames={{
+                    wrapper: 'grid grid-cols-3 gap-4',
+                  }}
                 >
-                  <Checkbox value="基本不运动">基本不运动</Checkbox>
-                  <Checkbox value="每日步行">每日步行</Checkbox>
-                  <Checkbox value="长跑">长跑</Checkbox>
-                  <Checkbox value="游泳">游泳</Checkbox>
-                  <Checkbox value="登山">登山</Checkbox>
-                  <Checkbox value="其他">其他</Checkbox>
+                  {checkboxOptions.exerciseHabits.map((option) => (
+                    <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full" key={option.value} value={option.value}>{option.label}</Checkbox>
+                  ))}
                 </CheckboxGroup>
               </div>
+
 
               <div className="mt-4">
                 <CheckboxGroup
@@ -652,23 +726,19 @@ export default function CreateUser() {
                   value={dietaryHabits}
                   onValueChange={(values) => setDietaryHabits(values)}
                   isRequired
-                  className="grid grid-cols-2 gap-2"
+                  classNames={{
+                    wrapper: 'grid grid-cols-3 gap-4',
+                  }}
                 >
-                  <Checkbox value="三餐规律">三餐规律</Checkbox>
-                  <Checkbox value="清淡">清淡</Checkbox>
-                  <Checkbox value="偏咸">偏咸</Checkbox>
-                  <Checkbox value="辛辣">辛辣</Checkbox>
-                  <Checkbox value="喜甜食">喜甜食</Checkbox>
-                  <Checkbox value="口味偏重">口味偏重</Checkbox>
-                  <Checkbox value="应酬多">应酬多</Checkbox>
-                  <Checkbox value="三餐不规律">三餐不规律</Checkbox>
-                  <Checkbox value="其他">其他</Checkbox>
+                  {checkboxOptions.dietaryHabits.map((option) => (
+                    <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
+                  ))}
                 </CheckboxGroup>
               </div>
             </Card>
 
             {/* 睡眠质量部分 */}
-            <Card className="p-6">
+            <Card className="p-6" fullWidth>
               <h2 className="text-xl font-semibold mb-4">睡眠质量</h2>
               <div className="mb-4">
                 <CheckboxGroup
@@ -677,11 +747,13 @@ export default function CreateUser() {
                   value={sleepQuality}
                   onValueChange={(values) => setSleepQuality(values)}
                   isRequired
-                  className="grid grid-cols-2 gap-2"
+                  classNames={{
+                    wrapper: 'grid grid-cols-3 gap-4',
+                  }}
                 >
-                  <Checkbox value="好">好</Checkbox>
-                  <Checkbox value="有失眠">有失眠</Checkbox>
-                  <Checkbox value="有鼾症">有鼾症</Checkbox>
+                  {checkboxOptions.sleepQuality.map((option) => (
+                    <Checkbox className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm" key={option.value} value={option.value}>{option.label}</Checkbox>
+                  ))}
                 </CheckboxGroup>
               </div>
 
