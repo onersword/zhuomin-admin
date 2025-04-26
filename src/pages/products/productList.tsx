@@ -19,6 +19,8 @@ import ChangePriceModal from "./components/ChangePriceModal";
 import { ProductStatus } from "@/types/product";
 import { Product, productApi } from "@/requests/product";
 import { usePagination } from "@/hooks/usePagination";
+import EditProductModal from "./components/EditProductModal";
+import { DeleteProductModal } from "./components/DeleteProductModal";
 
 const columns = [
   {
@@ -55,7 +57,9 @@ export default function ProductList({ status }: { status: ProductStatus }) {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
       data: products,
@@ -83,9 +87,16 @@ export default function ProductList({ status }: { status: ProductStatus }) {
     });
   };
 
-  const changePrice = (product: Product) => {
+  const edit = (product: Product) => {
     setSelectedProduct(product);
-    onOpen();
+    setEditModalOpen(true);
+  };
+  const deleteProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setDeleteModalOpen(true);
+  };
+  const handleConfirmDelete = () => {
+    getList();
   };
 
   const handlePriceChange = (newPrice: number) => {
@@ -135,12 +146,11 @@ export default function ProductList({ status }: { status: ProductStatus }) {
               >
                 {status === ProductStatus.ONLINE ? "下架" : "上架"}
               </Button>
-              <Button
-                color="primary"
-                size="sm"
-                onPress={() => changePrice(product)}
-              >
-                更改价格
+              <Button color="primary" size="sm" onPress={() => edit(product)}>
+                编辑
+              </Button>
+              <Button color="danger" size="sm" onPress={() => deleteProduct(product)}>
+                删除
               </Button>
             </div>
           );
@@ -155,7 +165,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
           return <div>{cellValue}</div>;
       }
     },
-    [status],
+    [status]
   );
 
   useEffect(() => {
@@ -211,12 +221,25 @@ export default function ProductList({ status }: { status: ProductStatus }) {
         </TableBody>
       </Table>
       {selectedProduct && (
-        <ChangePriceModal
-          isOpen={isOpen}
-          oldPrice={selectedProduct.price}
-          onConfirm={handlePriceChange}
-          onOpenChange={onOpenChange}
-        />
+        <>
+          <EditProductModal
+            isOpen={editModalOpen}
+            product={selectedProduct}
+            onOpenChange={setEditModalOpen}
+          />
+          <ChangePriceModal
+            isOpen={isOpen}
+            oldPrice={selectedProduct.price}
+            onConfirm={handlePriceChange}
+            onOpenChange={onOpenChange}
+          />
+          <DeleteProductModal
+            isOpen={deleteModalOpen}
+            onOpenChange={setDeleteModalOpen}
+            onConfirm={handleConfirmDelete}
+            product={selectedProduct}
+          />
+        </>
       )}
     </>
   );
