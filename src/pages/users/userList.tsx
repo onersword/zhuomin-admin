@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   Button,
   Pagination,
@@ -15,7 +15,8 @@ import moment from "moment";
 
 import { usePagination } from "@/hooks/usePagination";
 import { User, userApi } from "@/requests/user";
-
+import { UserStatus } from "@/types/user";
+import { UserContext } from ".";
 const columns = [
   {
     label: "档案编号",
@@ -39,15 +40,21 @@ const columns = [
   },
 ];
 
-export default function UserList() {
+export default function UserList({ status }: { status: UserStatus }) {
+  console.log("status", status);
   const [users, setUsers] = useState<User[]>([]);
   const rowsPerPage = 20;
   const navigate = useNavigate();
+  const { users: allUsers, loading, getUsers } = useContext(UserContext);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
       data: users,
       pageSize: rowsPerPage,
     });
+
+  useEffect(() => {
+    setUsers(allUsers.filter((user) => user.status === status));
+  }, [allUsers, status]);
 
   const deleteUser = useCallback((id: string) => {
     userApi.deleteUser(id).then((res) => {
@@ -85,21 +92,6 @@ export default function UserList() {
     }
   }, []);
 
-  const [loading, setLoading] = useState(false);
-
-  const getUsers = useCallback(() => {
-    setLoading(true);
-    userApi.getUsers().then((res: User[]) => {
-      console.log("user list", res);
-      if (res.length) {
-        setUsers(res.filter((item) => item.status === 2));
-      }
-      setLoading(false);
-    });
-  }, []);
-  useEffect(()=> {
-    getUsers();
-  }, []);
 
   return (
     <Table
