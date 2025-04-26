@@ -12,7 +12,7 @@ import {
   addToast,
   useDisclosure,
 } from "@heroui/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import ChangePriceModal from "./components/ChangePriceModal";
 
@@ -21,6 +21,7 @@ import { Product, productApi } from "@/requests/product";
 import { usePagination } from "@/hooks/usePagination";
 import EditProductModal from "./components/EditProductModal";
 import { DeleteProductModal } from "./components/DeleteProductModal";
+import { ProductContext } from "./index";
 
 const columns = [
   {
@@ -54,17 +55,22 @@ const columns = [
 ];
 
 export default function ProductList({ status }: { status: ProductStatus }) {
-  const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products: allProducts, loading, getList } = useContext(ProductContext);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
-      data: products,
+      data: filteredProducts,
       pageSize: 10,
     });
+
+  // 根据status筛选产品
+  useEffect(() => {
+    setFilteredProducts(allProducts.filter(item => item.status === status));
+  }, [allProducts, status]);
 
   const changeStatus = (id: number) => {
     let tempStatus = status;
@@ -112,19 +118,6 @@ export default function ProductList({ status }: { status: ProductStatus }) {
     }
   };
 
-  const getList = () => {
-    setLoading(true);
-    console.log("status", status);
-    productApi.getProducts().then((res: Product[]) => {
-      console.log("product list", res);
-
-      if (res.length) {
-        setProducts(res.filter((item) => item.status === status));
-      }
-      setLoading(false);
-    });
-  };
-
   const renderCell = useCallback(
     (product: Product, columnKey: string) => {
       const cellValue = getKeyValue(product, columnKey);
@@ -168,17 +161,13 @@ export default function ProductList({ status }: { status: ProductStatus }) {
     [status]
   );
 
-  useEffect(() => {
-    getList();
-  }, [status]);
-
   return (
     <>
       <Table
         aria-label="Example table with client side pagination"
         bottomContent={
           <div className="flex w-full justify-center">
-            {!loading && products.length > 0 && (
+            {!loading && filteredProducts.length > 0 && (
               <Pagination
                 isCompact
                 showControls
@@ -241,6 +230,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
           />
         </>
       )}
+     
     </>
   );
 }
