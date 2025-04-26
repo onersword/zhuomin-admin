@@ -1,7 +1,7 @@
 import { commonApi } from "@/requests/common";
 import { CreateProductData, productApi } from "@/requests/product";
 import { ProductStatus } from "@/types/product";
-import { CloudArrowUpIcon } from "@heroicons/react/24/solid";
+import { CloudArrowUpIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
   Input,
   Modal,
@@ -309,7 +309,7 @@ export function AddProductModal({
                                     flex items-center justify-center w-5 h-5 text-xs font-bold"
                               title="删除图片"
                             >
-                              ×
+                              <XMarkIcon className="size-4" />
                             </button>
                           </div>
                         ))}
