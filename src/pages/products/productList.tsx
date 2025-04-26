@@ -22,6 +22,7 @@ import { usePagination } from "@/hooks/usePagination";
 import EditProductModal from "./components/EditProductModal";
 import { DeleteProductModal } from "./components/DeleteProductModal";
 import { ProductContext } from "./index";
+import { ViewProductModal } from "./components/ViewProductModal";
 
 const columns = [
   {
@@ -61,6 +62,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
       data: filteredProducts,
@@ -104,6 +106,10 @@ export default function ProductList({ status }: { status: ProductStatus }) {
   const handleConfirmDelete = () => {
     getList();
   };
+  const viewProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setViewModalOpen(true);
+  };
 
   const handlePriceChange = (newPrice: number) => {
     if (selectedProduct) {
@@ -138,6 +144,9 @@ export default function ProductList({ status }: { status: ProductStatus }) {
                 onPress={() => changeStatus(product.id)}
               >
                 {status === ProductStatus.ONLINE ? "下架" : "上架"}
+              </Button>
+              <Button color="primary" size="sm" onPress={() => viewProduct(product)}>
+                查看
               </Button>
               <Button color="primary" size="sm" onPress={() => edit(product)}>
                 编辑
@@ -226,6 +235,11 @@ export default function ProductList({ status }: { status: ProductStatus }) {
             isOpen={deleteModalOpen}
             onOpenChange={setDeleteModalOpen}
             onConfirm={handleConfirmDelete}
+            product={selectedProduct}
+          />
+          <ViewProductModal
+            isOpen={viewModalOpen}
+            onOpenChange={setViewModalOpen}
             product={selectedProduct}
           />
         </>

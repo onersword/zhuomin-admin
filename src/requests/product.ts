@@ -5,8 +5,12 @@ import { http } from "./http";
 export interface Product {
   id: number;
   name: string;
+  description?: string;
   price: number;
+  unit?: string;
   status: number;
+  images?: string[];
+  createdAt?: string;
   updatedAt: string;
 }
 
