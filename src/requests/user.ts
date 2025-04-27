@@ -21,6 +21,11 @@ export const userApi = {
     return response;
   },
 
+  getUser: async (id: string): Promise<User> => {
+    const response = await http.get<User>(`/api/users/${id}`);
+    return response;
+  },
+
   // Get user by id
   getUserById: async (id:string): Promise<User> => {
     const response = await http.get<User>(`/api/users/${id}`);
@@ -103,5 +108,9 @@ export const userApi = {
     const response = await http.post<any>(`/api/users/${userId}/products`, { productId });
     return response;
   },
-  
+
+  updateUser: async (userId: string, data: any): Promise<any> => {
+    const response = await http.patch<any>(`/api/users/${userId}`, data);
+    return response;
+  },
 };

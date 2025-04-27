@@ -169,6 +169,9 @@ export default function UserList({ status }: { status: UserStatus }) {
           isOpen={reviewModalOpen}
           onOpenChange={setReviewModalOpen}
           user={user as User}
+          onSuccess={() => {
+            getUsers();
+          }}
         />
       )}
     </>

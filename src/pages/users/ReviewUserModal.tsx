@@ -1,5 +1,6 @@
-import { User } from "@/requests/user";
+import { User, userApi } from "@/requests/user";
 import {
+  addToast,
   Button,
   Card,
   Input,
@@ -9,16 +10,58 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@heroui/react";
+import { useEffect, useState } from "react";
 
 export function ReviewUserModal({
   isOpen,
   onOpenChange,
   user,
+  onSuccess,
 }: {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   user: User;
+  onSuccess: () => void;
 }) {
+  const [loading, setLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+  const reviewUserPass = async () => {
+    setLoading(true);
+    const res = await userApi.updateUser(user.id, {
+      status: 2,
+    });
+    console.log('res', res);
+    addToast({
+      title: '审核通过',
+      description: '用户审核通过',
+      color: 'success',
+    });
+    onSuccess();
+    onOpenChange(false);
+  }
+
+  const rejectUser= async () => {
+    const res = await userApi.deleteUser(user.id);
+    if (res.status === 200) {
+      onOpenChange(false);
+    }
+    addToast({
+      title: '审核不通过',
+      description: '用户审核不通过，已删除用户信息',
+      color: 'danger',
+    });
+    onSuccess();
+    onOpenChange(false);
+  }
+
+  const getUserInfo = async () => {
+    const res = await userApi.getUser(user.id);
+    setUserInfo(res);
+  }
+  useEffect(() => {
+    getUserInfo().then();
+  }, [user]);
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
       <ModalContent>
@@ -42,8 +85,8 @@ export function ReviewUserModal({
           </Card>
         </ModalBody>
         <ModalFooter>
-          <Button color="danger">审核不通过(删除用户信息)</Button>
-          <Button color="primary">审核通过</Button>
+          <Button color="danger" onPress={rejectUser} isDisabled={loading}>审核不通过(删除用户信息)</Button>
+          <Button color="primary" onPress={reviewUserPass} isDisabled={loading} isLoading={loading}>审核通过</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
