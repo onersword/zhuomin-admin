@@ -38,7 +38,7 @@ export default function UsersPage() {
     userApi.getUsers().then((res: User[]) => {
       console.log("user list", res);
       if (res.length) {
-        setUsers(res.filter((item) => item.status === 2));
+        setUsers(res.filter((item) => item.status !== 0));
       }
       setLoading(false);
     });

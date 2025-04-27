@@ -8,6 +8,7 @@ export interface User {
   status: number;
   wechatId: string;
   createdAt: string;
+  forms: { label: string, value: string }[];
   updatedAt: string;
 }
 
