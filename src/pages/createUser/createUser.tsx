@@ -22,7 +22,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import { getLocalTimeZone, parseDate, now } from "@internationalized/date";
 import moment from "moment";
 import { userApi } from "@/requests/user";
-
+import { useNavigate } from "react-router-dom";
 // 下拉选择框选项配置
 const selectOptions = {
   occupation: [
@@ -155,6 +155,7 @@ const handleSelectVauleNo = (values: string[], noLable = "无") => {
 };
 
 export default function CreateUser() {
+  const navigate = useNavigate();
   // 基本信息
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
@@ -322,6 +323,7 @@ export default function CreateUser() {
         description: "建档成功",
         color: "success",
       });
+      navigate("/users");
       console.log(res);
     } catch (error) {
       console.log(error);
