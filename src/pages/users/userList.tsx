@@ -66,10 +66,10 @@ export default function UserList({ status }: { status: UserStatus }) {
     });
   }, []);
 
-  console.log('status', status);
+  console.log("status", status);
   const renderOptions = useCallback(
     (user: User) => {
-      console.log('render options', status);
+      console.log("render options", status);
       if (status === UserStatus.Reviewd) {
         return (
           <>
@@ -110,18 +110,21 @@ export default function UserList({ status }: { status: UserStatus }) {
     },
     [status]
   );
-  const renderCell = useCallback((user: User, columnKey: string) => {
-    const cellValue = getKeyValue(user, columnKey);
+  const renderCell = useCallback(
+    (user: User, columnKey: string) => {
+      const cellValue = getKeyValue(user, columnKey);
 
-    switch (columnKey) {
-      case "createdAt":
-        return moment(cellValue).format("YYYY-MM-DD HH:mm:ss");
-      case "actions":
-        return <div className="flex gap-2">{renderOptions(user)}</div>;
-      default:
-        return <div>{cellValue}</div>;
-    }
-  }, [renderOptions, status]);
+      switch (columnKey) {
+        case "createdAt":
+          return moment(cellValue).format("YYYY-MM-DD HH:mm:ss");
+        case "actions":
+          return <div className="flex gap-2">{renderOptions(user)}</div>;
+        default:
+          return <div>{cellValue}</div>;
+      }
+    },
+    [renderOptions, status]
+  );
 
   return (
     <>
@@ -151,7 +154,11 @@ export default function UserList({ status }: { status: UserStatus }) {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           ))}
         </TableHeader>
-        <TableBody items={currentPageData}>
+        <TableBody
+          emptyContent="暂无数据"
+          isLoading={loading}
+          items={currentPageData}
+        >
           {(item: User) => (
             <TableRow key={item.id} className="hover:bg-gray-100">
               {(columnKey) => (

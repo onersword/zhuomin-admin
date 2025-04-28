@@ -56,6 +56,7 @@ export function ReviewUserModal({
 
   const getUserInfo = async () => {
     const res = await userApi.getUserById(user.id);
+    console.log('res', res);
     setUserInfo(res);
   }
   useEffect(() => {
@@ -63,26 +64,25 @@ export function ReviewUserModal({
   }, [user]);
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside" size="4xl">
       <ModalContent>
-        <ModalHeader>审核用户</ModalHeader>
+        <ModalHeader className="border-b border-gray-300">审核用户</ModalHeader>
         <ModalBody>
-          <Card>
-            {(user.forms || []).map((item, index) => (
-              <div className="flex flex-col gap-4" key={index}>
-                <div className="grid grid-cols-12 items-center">
-                  <div className="col-span-3">
+            <div className="flex flex-col">
+
+            {(userInfo?.forms || []).map((item, index) => (
+                <div className="grid grid-cols-5 items-center border-b border-gray-300 py-4 " key={index}>
+                  <div className="col-span-1 w-[400px]">
                     <span className="text-sm font-medium text-gray-500">
                       {item.label}
                     </span>
                   </div>
-                  <div className="col-span-9">
+                  <div className="col-span-4">
                     <p className="text-base font-semibold">{item.value}</p>
                   </div>
                 </div>
-              </div>
             ))}
-          </Card>
+            </div>
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onPress={rejectUser} isDisabled={loading}>审核不通过(删除用户信息)</Button>

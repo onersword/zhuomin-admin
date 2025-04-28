@@ -159,6 +159,8 @@ export default function CreateUser() {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [createDate, setCreateDate] = useState(parseDate("2024-04-04"));
+  const [birthDate, setBirthDate] = useState<CalendarDate | undefined>();
   const [nationality, setNationality] = useState("中国");
   const [occupation, setOccupation] = useState("");
   const [address, setAddress] = useState("");
@@ -194,7 +196,6 @@ export default function CreateUser() {
   const [sleepQuality, setSleepQuality] = useState<string[]>([]);
   const [sleepHours, setSleepHours] = useState("7");
 
-  const [birthDate, setBirthDate] = useState(parseDate("2024-04-04"));
 
   const handleDateTimeChange = (value: any) => {
     setBirthDate(value);
@@ -210,11 +211,15 @@ export default function CreateUser() {
     console.log("Form submitted:", e);
     const data = [];
     //基本信息
-    data.push({ label: "建档日期", value: birthDate.toString() });
+    data.push({ label: "建档日期", value: createDate.toString() });
     data.push({ label: "姓名", value: name });
     data.push({ label: "手机号", value: phoneNumber });
     data.push({ label: "性别", value: gender });
     data.push({ label: "国籍/籍贯", value: nationality });
+    if (!birthDate) {
+      return;
+
+    }
     data.push({ label: "出生日期", value: birthDate.toString() });
     data.push({
       label: "职业",
@@ -332,6 +337,16 @@ export default function CreateUser() {
         <Card className="p-6" fullWidth>
           <h2 className="text-xl font-semibold mb-4">基本信息</h2>
           <div className="flex flex-col gap-4">
+            <div className="mb-4 ">
+              <DatePicker
+                labelPlacement="outside"
+                className="max-w-sm"
+                label={"建档日期"}
+                value={createDate}
+                onChange={(e) => setCreateDate(e as any)}
+                errorMessage="请选择建档日期"
+              />
+            </div>
             <div className="mb-4 ">
               <Input
                 label="姓名"
@@ -844,7 +859,7 @@ export default function CreateUser() {
           </div>
         </Card>
 
-        <div className="flex justify-center">
+        <div className="flex justify-end gap-4 w-full">
           <Button type="reset" variant="bordered" className="px-8 py-2">
             重置
           </Button>
