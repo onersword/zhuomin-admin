@@ -66,7 +66,6 @@ export default function UserList({ status }: { status: UserStatus }) {
     });
   }, []);
 
-  console.log("status", status);
   const renderOptions = useCallback(
     (user: User) => {
       console.log("render options", status);

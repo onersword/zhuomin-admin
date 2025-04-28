@@ -9,6 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  ScrollShadow,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
 
@@ -66,8 +67,10 @@ export function ReviewUserModal({
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside" size="4xl">
       <ModalContent>
-        <ModalHeader className="border-b border-gray-300">审核用户</ModalHeader>
+        <ModalHeader>审核用户</ModalHeader>
         <ModalBody>
+          <ScrollShadow>
+
             <div className="flex flex-col">
 
             {(userInfo?.forms || []).map((item, index) => (
@@ -83,6 +86,7 @@ export function ReviewUserModal({
                 </div>
             ))}
             </div>
+          </ScrollShadow>
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onPress={rejectUser} isDisabled={loading}>审核不通过(删除用户信息)</Button>

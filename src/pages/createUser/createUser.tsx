@@ -339,6 +339,7 @@ export default function CreateUser() {
           <div className="flex flex-col gap-4">
             <div className="mb-4 ">
               <DatePicker
+              showMonthAndYearPickers
                 labelPlacement="outside"
                 className="max-w-sm"
                 label={"建档日期"}
@@ -415,6 +416,7 @@ export default function CreateUser() {
 
             <div className="mb-4 ">
               <DatePicker
+              showMonthAndYearPickers
                 labelPlacement="outside"
                 className="max-w-sm"
                 label={"出生日期"}
@@ -436,7 +438,7 @@ export default function CreateUser() {
                 errorMessage="请选择职业"
               >
                 {selectOptions.occupation.map((option) => (
-                  <SelectItem key={option.value}>{option.label}</SelectItem>
+                  <SelectItem color="primary" key={option.value}>{option.label}</SelectItem>
                 ))}
               </Select>
             </div>

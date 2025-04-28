@@ -14,7 +14,7 @@ export default function DefaultLayout({
       </div>
       
       {/* Fixed sidebar */}
-      <div className="fixed top-16 left-0 w-[200px] h-[calc(100vh-64px)] bg-default-600 text-white z-[2]">
+      <div className="fixed top-16 left-0 w-[200px] h-[calc(100vh-64px)] bg-[#52525B] text-white z-[2]">
         <Sidebar />
       </div>
       

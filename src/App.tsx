@@ -8,6 +8,8 @@ import RouteGuard from "./components/RouteGuard";
 
 function App() {
   return (
+    <div className="light">
+
     <Routes>
       {/* Public routes */}
       <Route element={<Login />} path="/login" />
@@ -19,6 +21,7 @@ function App() {
       <Route element={<RouteGuard><CreateUser /></RouteGuard>} path="/users/create" />
       <Route element={<RouteGuard><UserInfoPage /></RouteGuard>} path="/users/:id" />
     </Routes>
+    </div>
   );
 }
 
