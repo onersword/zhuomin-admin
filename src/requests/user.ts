@@ -21,11 +21,6 @@ export const userApi = {
     return response;
   },
 
-  getUser: async (id: string): Promise<User> => {
-    const response = await http.get<User>(`/api/users/${id}`);
-    return response;
-  },
-
   // Get user by id
   getUserById: async (id:string): Promise<User> => {
     const response = await http.get<User>(`/api/users/${id}`);

@@ -55,7 +55,7 @@ export function ReviewUserModal({
   }
 
   const getUserInfo = async () => {
-    const res = await userApi.getUser(user.id);
+    const res = await userApi.getUserById(user.id);
     setUserInfo(res);
   }
   useEffect(() => {
