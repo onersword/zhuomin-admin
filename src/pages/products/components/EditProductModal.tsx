@@ -249,7 +249,6 @@ export default function EditProductModal({
                         onChange={(e) => setUnit(e.target.value)}
                         variant="bordered"
                         className="w-full"
-                        isDisabled={true}
                       />
                     </div>
                   </div>
