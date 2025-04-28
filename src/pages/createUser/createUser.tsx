@@ -159,7 +159,7 @@ export default function CreateUser() {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [createDate, setCreateDate] = useState(parseDate("2024-04-04"));
+  const [createDate, setCreateDate] = useState(parseDate(moment().format("YYYY-MM-DD")));
   const [birthDate, setBirthDate] = useState<CalendarDate | undefined>();
   const [nationality, setNationality] = useState("中国");
   const [occupation, setOccupation] = useState("");
