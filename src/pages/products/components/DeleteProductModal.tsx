@@ -1,5 +1,5 @@
 import { Product, productApi } from "@/requests/product";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
+import { addToast, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
 
 export function DeleteProductModal({
   isOpen,
@@ -14,7 +14,13 @@ export function DeleteProductModal({
 }) {
   const handleConfirm = () => {
     productApi.deleteProduct(product.id).then(() => {
+      addToast({
+        title: '删除成功',
+        description: '产品已删除',
+        color: 'success',
+      });
       onConfirm();
+
       onOpenChange(false);
     });
   };
