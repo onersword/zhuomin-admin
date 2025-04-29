@@ -309,7 +309,7 @@ export default function CreateUser() {
       value: handleOther(medicalHistory, medicalHistoryOther),
     });
     data.push({
-      label: '家族性疾病史',
+      label: '家族性疾病史（直系亲属）',
       value: handleOther(familyMedicalHistory, familyMedicalHistoryOther),
     })
 
@@ -793,7 +793,7 @@ export default function CreateUser() {
           </div>
           <div className="mb-4">
             <CheckboxGroup
-              label="家族性疾病史"
+              label="家族性疾病史（直系亲属）"
               orientation="horizontal"
               value={familyMedicalHistory}
               onValueChange={(values) =>
@@ -803,7 +803,7 @@ export default function CreateUser() {
               classNames={{
                 wrapper: "grid grid-cols-3 gap-4",
               }}
-              errorMessage="请选择家族性疾病史"
+              errorMessage="请选择家族性疾病史（直系亲属）"
             >
               {checkboxOptions.familyMedicalHistory.map((option) => (
                 <Checkbox
@@ -818,13 +818,13 @@ export default function CreateUser() {
             {familyMedicalHistory.includes("其他") && (
                 <Textarea
                   className="w-full mt-2"
-                  label="其他家族性疾病史"
+                  label="其他家族性疾病史（直系亲属）"
                   labelPlacement="outside"
                   value={familyMedicalHistoryOther}
                   onChange={(e) => setFamilyMedicalHistoryOther(e.target.value)}
-                  placeholder="请描述您的其他家族性疾病史"
+                  placeholder="请描述您的其他家族性疾病史（直系亲属）"
                   variant="bordered"
-                  errorMessage="请描述您的其他家族性疾病史"
+                  errorMessage="请描述您的其他家族性疾病史（直系亲属）"
                 />
               )}
           </div>
