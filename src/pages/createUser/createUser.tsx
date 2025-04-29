@@ -27,13 +27,14 @@ import { useNavigate } from "react-router-dom";
 const selectOptions = {
   occupation: [
     { label: "请选择职业", value: "" },
-    { label: "医生", value: "医生" },
-    { label: "教师", value: "教师" },
-    { label: "工程师", value: "工程师" },
+    { label: "退休", value: "退休" },
+    { label: "商人", value: "商人" },
+    { label: "企业单位工作人员", value: "企业单位工作人员" },
     { label: "公务员", value: "公务员" },
-    { label: "销售", value: "销售" },
+    { label: "事业单位工作人员", value: "事业单位工作人员" },
+    { label: "技术人员", value: "技术人员" },
+    { label: "军人", value: "军人" },
     { label: "学生", value: "学生" },
-    { label: "自由职业", value: "自由职业" },
     { label: "其他", value: "其他" },
   ],
   bloodType: [
@@ -89,6 +90,18 @@ const checkboxOptions = {
     { label: "脂肪肝", value: "脂肪肝" },
     { label: "胆结石", value: "胆结石" },
     { label: "肝脾肿", value: "肝脾肿" },
+    { label: "其他", value: "其他" },
+  ],
+  familyMedicalHistory: [
+    { label: "无", value: "无" },
+    { label: "高血压", value: "高血压" },
+    { label: "糖尿病", value: "糖尿病" },
+    { label: "冠心病", value: "冠心病" },
+    { label: "高血脂", value: "高血脂" },
+    { label: "恶性肿瘤", value: "恶性肿瘤" },
+    { label: "脑卒中", value: "脑卒中" },
+    { label: "慢性阻塞性肺病", value: "慢性阻塞性肺病" },
+    { label: "乙肝", value: "乙肝" },
     { label: "其他", value: "其他" },
   ],
   smokingHistory: [
@@ -170,7 +183,7 @@ export default function CreateUser() {
   const [emergencyPhone, setEmergencyPhone] = useState("");
   const [maritalStatus, setMaritalStatus] = useState("");
   const [insuranceTypes, setInsuranceTypes] = useState<string[]>([]);
-
+  const [insuranceTypesOther, setInsuranceTypesOther] = useState("");
   // 健康信息
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
@@ -183,19 +196,31 @@ export default function CreateUser() {
 
   // 过敏史
   const [allergies, setAllergies] = useState<string[]>([]);
-
+  const [allergiesOther, setAllergiesOther] = useState("");
   // 病史
   const [medicalHistory, setMedicalHistory] = useState<string[]>([]);
+  const [medicalHistoryOther, setMedicalHistoryOther] = useState("");
+  const [familyMedicalHistory, setFamilyMedicalHistory] = useState<string[]>([]);
+  const [familyMedicalHistoryOther, setFamilyMedicalHistoryOther] = useState("");
   const [hospitalizationHistory, setHospitalizationHistory] = useState("");
 
   // 生活习惯
   const [smokingHistory, setSmokingHistory] = useState<string[]>([]);
   const [exerciseHabits, setExerciseHabits] = useState<string[]>([]);
+  const [exerciseHabitsOther, setExerciseHabitsOther] = useState("");
   const [dietaryHabits, setDietaryHabits] = useState<string[]>([]);
-
+  const [dietaryHabitsOther, setDietaryHabitsOther] = useState("");
   // 睡眠质量
   const [sleepQuality, setSleepQuality] = useState<string[]>([]);
   const [sleepHours, setSleepHours] = useState("7");
+
+  const handleOther = (arr: string[], other: string) => {
+    if (arr.includes('其他')) {
+      arr.splice(arr.indexOf('其他'), 1)
+      arr.push(other)
+      }
+      return arr.join(',');
+  }
 
 
   const handleDateTimeChange = (value: any) => {
@@ -235,7 +260,7 @@ export default function CreateUser() {
     // 医疗保险类型
     data.push({
       label: "医疗保险类型",
-      value: insuranceTypes.join(","),
+      value: handleOther(insuranceTypes, insuranceTypesOther),
     });
     // 基本信息结束
 
@@ -275,16 +300,20 @@ export default function CreateUser() {
     // 过敏史
     data.push({
       label: "过敏史",
-      value: allergies.join(","),
+      value: handleOther(allergies, allergiesOther),
     });
 
     // 既往史
     data.push({
       label: "既往史",
-      value: medicalHistory.join(","),
+      value: handleOther(medicalHistory, medicalHistoryOther),
     });
+    data.push({
+      label: '家族性疾病史',
+      value: handleOther(familyMedicalHistory, familyMedicalHistoryOther),
+    })
 
-    data.push({ label: "住院史", value: hospitalizationHistory || "无" });
+    data.push({ label: "手术史", value: hospitalizationHistory || "无" });
 
     // 生活习惯
     data.push({
@@ -294,12 +323,12 @@ export default function CreateUser() {
 
     data.push({
       label: "运动习惯",
-      value: exerciseHabits.join(","),
+      value: handleOther(exerciseHabits, exerciseHabitsOther),
     });
 
     data.push({
       label: "饮食习惯",
-      value: dietaryHabits.join(","),
+      value: handleOther(dietaryHabits, dietaryHabitsOther),
     });
 
     data.push({
@@ -546,6 +575,18 @@ export default function CreateUser() {
                   </Checkbox>
                 ))}
               </CheckboxGroup>
+              {insuranceTypes.includes("其他") && (
+                <Textarea
+                  className="w-full mt-2"
+                  label="其他医疗保险类型"
+                  labelPlacement="outside"
+                  value={insuranceTypesOther}
+                  onChange={(e) => setInsuranceTypesOther(e.target.value)}
+                  placeholder="请描述您的其他医疗保险类型"
+                  variant="bordered"
+                  errorMessage="请描述您的其他医疗保险类型"
+                />
+              )}
             </div>
           </div>
         </Card>
@@ -655,6 +696,8 @@ export default function CreateUser() {
               {medication === "有" && (
                 <Textarea
                   className="w-full mt-2"
+                  label="请描述您的用药情况"
+                  labelPlacement="outside"
                   value={medicationDetail}
                   onChange={(e) => setMedicationDetail(e.target.value)}
                   placeholder="请描述您的用药情况(药物名称；剂量；复用频率)"
@@ -693,6 +736,18 @@ export default function CreateUser() {
                 </Checkbox>
               ))}
             </CheckboxGroup>
+            {allergies.includes("其他") && (
+                <Textarea
+                  className="w-full mt-2"
+                  label="其他过敏详情"
+                  labelPlacement="outside"
+                  value={allergiesOther}
+                  onChange={(e) => setAllergiesOther(e.target.value)}
+                  placeholder="请描述您的其他过敏详情"
+                  variant="bordered"
+                  errorMessage="请描述您的其他过敏详情"
+                />
+              )}
           </div>
         </Card>
 
@@ -723,11 +778,59 @@ export default function CreateUser() {
                 </Checkbox>
               ))}
             </CheckboxGroup>
+            {medicalHistory.includes("其他") && (
+                <Textarea
+                  className="w-full mt-2"
+                  label="其他既往史"
+                  labelPlacement="outside"
+                  value={medicalHistoryOther}
+                  onChange={(e) => setMedicalHistoryOther(e.target.value)}
+                  placeholder="请描述您的其他既往史"
+                  variant="bordered"
+                  errorMessage="请描述您的其他既往史"
+                />
+              )}
           </div>
-
+          <div className="mb-4">
+            <CheckboxGroup
+              label="家族性疾病史"
+              orientation="horizontal"
+              value={familyMedicalHistory}
+              onValueChange={(values) =>
+                setFamilyMedicalHistory(handleSelectVauleNo(values, '无'))
+              }
+              isRequired
+              classNames={{
+                wrapper: "grid grid-cols-3 gap-4",
+              }}
+              errorMessage="请选择家族性疾病史"
+            >
+              {checkboxOptions.familyMedicalHistory.map((option) => (
+                <Checkbox
+                  className="border border-gray-300 rounded-md py-1 px-2 m-0  !max-w-full text-sm"
+                  key={option.value}
+                  value={option.value}
+                >
+                  {option.label}
+                </Checkbox>
+              ))}
+            </CheckboxGroup>
+            {familyMedicalHistory.includes("其他") && (
+                <Textarea
+                  className="w-full mt-2"
+                  label="其他家族性疾病史"
+                  labelPlacement="outside"
+                  value={familyMedicalHistoryOther}
+                  onChange={(e) => setFamilyMedicalHistoryOther(e.target.value)}
+                  placeholder="请描述您的其他家族性疾病史"
+                  variant="bordered"
+                  errorMessage="请描述您的其他家族性疾病史"
+                />
+              )}
+          </div>
           <div className="mt-4">
             <Textarea
-              label="住院史"
+              label="手术史"
               labelPlacement="outside"
               variant="bordered"
               value={hospitalizationHistory}
@@ -792,6 +895,18 @@ export default function CreateUser() {
                 </Checkbox>
               ))}
             </CheckboxGroup>
+            {exerciseHabits.includes("其他") && (
+                <Textarea
+                  className="w-full mt-2"
+                  label="其他运动习惯"
+                  labelPlacement="outside"
+                  value={exerciseHabitsOther}
+                  onChange={(e) => setExerciseHabitsOther(e.target.value)}
+                  placeholder="请描述您的其他运动习惯"
+                  variant="bordered"
+                  errorMessage="请描述您的其他运动习惯"
+                />
+              )}
           </div>
 
           <div className="mt-4">
@@ -816,6 +931,18 @@ export default function CreateUser() {
                 </Checkbox>
               ))}
             </CheckboxGroup>
+            {dietaryHabits.includes("其他") && (
+                <Textarea
+                  className="w-full mt-2"
+                  label="其他饮食习惯"
+                  labelPlacement="outside"
+                  value={dietaryHabitsOther}
+                  onChange={(e) => setDietaryHabitsOther(e.target.value)}
+                  placeholder="请描述您的其他饮食习惯"
+                  variant="bordered"
+                  errorMessage="请描述您的其他饮食习惯"
+                />
+              )}
           </div>
         </Card>
 
