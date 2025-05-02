@@ -131,8 +131,13 @@ const checkboxOptions = {
   ],
   sleepQuality: [
     { label: "好", value: "好" },
-    { label: "有失眠", value: "有失眠" },
-    { label: "有鼾症", value: "有鼾症" },
+    { label: "一般", value: "一般" },
+    { label: "差", value: "差" },
+    { label: "失眠有", value: "失眠有" },
+    { label: "失眠无", value: "失眠无" },
+    { label: "睡眠时长（小时）", value: "睡眠时长（小时）" },
+    { label: "鼾症有", value: "鼾症有" },
+    { label: "鼾症无", value: "鼾症无" },
   ],
 };
 
@@ -877,7 +882,7 @@ export default function CreateUser() {
               orientation="horizontal"
               value={exerciseHabits}
               onValueChange={(values) =>
-                setExerciseHabits(handleSelectVauleNo(values, "基本不运动"))
+                setExerciseHabits(values)
               }
               isRequired
               classNames={{
@@ -955,7 +960,7 @@ export default function CreateUser() {
               orientation="horizontal"
               value={sleepQuality}
               onValueChange={(values) => {
-                setSleepQuality(handleSelectVauleNo(values, "好"));
+                setSleepQuality(values);
               }}
               isRequired
               classNames={{
