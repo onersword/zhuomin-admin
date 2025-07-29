@@ -219,6 +219,8 @@ GET /api/users/{userId}/notes
     "id": "笔记 ID",
     "userId": "用户 ID",
     "content": "笔记内容",
+    "name": "笔记名称",
+    "url": "笔记 URL",
     "createdAt": "创建时间",
     "updatedAt": "更新时间"
   }
@@ -241,7 +243,29 @@ POST /api/users/{userId}/notes
 
 ```json
 {
-  "content": "小结内容"
+  "file": "文件"
+}
+```
+
+例子
+
+```
+curl --location 'http://localhost:3000/api/users/7b9997a2-cbfe-4ea5-9403-fa8d55c123d4/notes' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzQ0NTE0NzYyfQ.8EK6xObqI7y9vHrOrdxptO46DRS8m5OmtGA6UvjBvMU' \
+--form 'file=@"/Users/pp/Downloads/体检报告20240212.pdf"'
+```
+
+响应:
+
+```json
+{
+  "id":"df9453a7-7f96-44c5-96c7-57a8a88ff380",
+  "userId":"7b9997a2-cbfe-4ea5-9403-fa8d55c123d4",
+  "name":"体检报告20240212.pdf",
+  "content":"",
+  "url":"https://7072-prod-8gvh8k8d1aeb0797-1345362468.tcb.qcloud.la/files/体检报告20240212.pdf",
+  "createdAt":"2025-04-09T14:27:56.000Z",
+  "updatedAt":"2025-04-11T10:56:45.000Z"
 }
 ```
 

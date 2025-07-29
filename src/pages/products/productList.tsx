@@ -16,7 +16,12 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import ChangePriceModal from "./components/ChangePriceModal";
 
-import { ProductStatus, ProductType, ProductTypeMap, typeColorMap } from "@/types/product";
+import {
+  ProductStatus,
+  ProductType,
+  ProductTypeMap,
+  typeColorMap,
+} from "@/types/product";
 import { Product, productApi } from "@/requests/product";
 import { usePagination } from "@/hooks/usePagination";
 import EditProductModal from "./components/EditProductModal";
@@ -31,22 +36,27 @@ const columns = [
     width: 200,
   },
   {
-    label: "产品类型",
-    key: "type",
-    width: 100,
+    label: "产品描述",
+    key: "description",
+    // width: 200,
   },
-  {
-    label: "产品价格",
-    key: "price",
-    align: "end",
-    width: 150,
-  },
-  {
-    label: "更新时间",
-    key: "updatedAt",
-    align: "end",
-    width: 200,
-  },
+  // {
+  //   label: "产品类型",
+  //   key: "type",
+  //   width: 100,
+  // },
+  // {
+  //   label: "产品价格",
+  //   key: "price",
+  //   align: "end",
+  //   width: 150,
+  // },
+  // {
+  //   label: "更新时间",
+  //   key: "updatedAt",
+  //   align: "end",
+  //   width: 200,
+  // },
   {
     label: "",
     align: "end",
@@ -54,9 +64,12 @@ const columns = [
   },
 ];
 
-export default function ProductList({ status }: { status: ProductStatus }) {
-  const { products: allProducts, loading, getList } = useContext(ProductContext);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+export default function ProductList() {
+  const {
+    products: allProducts,
+    loading,
+    getList,
+  } = useContext(ProductContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -64,35 +77,9 @@ export default function ProductList({ status }: { status: ProductStatus }) {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
-      data: filteredProducts,
+      data: allProducts,
       pageSize: 10,
     });
-
-  // 根据status筛选产品
-  useEffect(() => {
-    setFilteredProducts(allProducts.filter(item => item.status === status));
-  }, [allProducts, status]);
-
-  const changeStatus = (id: number) => {
-    let tempStatus = status;
-
-    if (status === ProductStatus.ONLINE) {
-      tempStatus = ProductStatus.OFFLINE;
-    } else {
-      tempStatus = ProductStatus.ONLINE;
-    }
-
-    productApi.changeStatus(id, tempStatus).then(() => {
-      const text = tempStatus === ProductStatus.ONLINE ? "上架" : "下架";
-
-      addToast({
-        title: "操作成功",
-        description: `产品${text}成功`,
-        color: "success",
-      });
-      getList();
-    });
-  };
 
   const edit = (product: Product) => {
     setSelectedProduct(product);
@@ -123,53 +110,56 @@ export default function ProductList({ status }: { status: ProductStatus }) {
     }
   };
 
-  const renderCell = useCallback(
-    (product: Product, columnKey: string) => {
-      const cellValue = getKeyValue(product, columnKey);
+  const renderCell = useCallback((product: Product, columnKey: string) => {
+    const cellValue = getKeyValue(product, columnKey);
 
-      switch (columnKey) {
-        case "updatedAt":
-          return (
-            <div className="tabular-nums">
-              {moment(cellValue).format("YYYY-MM-DD HH:mm:ss")}
-            </div>
-          );
-        case "type":
-          return <div className="flex items-center gap-2"><label className={`text-white rounded-[4px] text-sm px-2 py-1`} style={{ backgroundColor: typeColorMap[cellValue as ProductType] }}>{ProductTypeMap[cellValue as ProductType]}</label></div>;
-        case "actions":
-          return (
-            <div className="flex gap-2 justify-end">
-              <Button
-                color="primary"
-                size="sm"
-                onPress={() => changeStatus(product.id)}
-              >
-                {status === ProductStatus.ONLINE ? "下架" : "上架"}
-              </Button>
-              <Button color="primary" size="sm" onPress={() => viewProduct(product)}>
-                查看
-              </Button>
-              <Button color="primary" size="sm" onPress={() => edit(product)}>
-                编辑
-              </Button>
-              <Button color="danger" size="sm" onPress={() => deleteProduct(product)}>
-                删除
-              </Button>
-            </div>
-          );
-        case "price":
-          return (
-            <div className="tabular-nums">
-              {new Intl.NumberFormat().format(cellValue)} 元
-            </div>
-          );
+    switch (columnKey) {
+      case "updatedAt":
+        return (
+          <div className="tabular-nums">
+            {moment(cellValue).format("YYYY-MM-DD HH:mm:ss")}
+          </div>
+        );
+      case "type":
+        return (
+          <div className="flex items-center gap-2">
+            <label
+              className={`text-white rounded-[4px] text-sm px-2 py-1`}
+              style={{
+                backgroundColor: typeColorMap[cellValue as ProductType],
+              }}
+            >
+              {ProductTypeMap[cellValue as ProductType]}
+            </label>
+          </div>
+        );
+      case "actions":
+        return (
+          <div className="flex gap-2 justify-end">
+            <Button color="primary" size="sm" onPress={() => edit(product)}>
+              编辑
+            </Button>
+            <Button
+              color="danger"
+              size="sm"
+              onPress={() => deleteProduct(product)}
+            >
+              删除
+            </Button>
+          </div>
+        );
+      case "price":
+        return (
+          <div className="tabular-nums">
+            {new Intl.NumberFormat().format(cellValue)} 元
+          </div>
+        );
 
-        default:
-          return <div>{cellValue}</div>;
-      }
-    },
-    [status]
-  );
+      default:
+        return <div>{cellValue}</div>;
+    }
+  }, []);
+
 
   return (
     <>
@@ -177,7 +167,7 @@ export default function ProductList({ status }: { status: ProductStatus }) {
         aria-label="Example table with client side pagination"
         bottomContent={
           <div className="flex w-full justify-center">
-            {!loading && filteredProducts.length > 0 && (
+            {!loading && allProducts.length > 0 && (
               <Pagination
                 isCompact
                 showControls
@@ -246,7 +236,6 @@ export default function ProductList({ status }: { status: ProductStatus }) {
           />
         </>
       )}
-     
     </>
   );
 }

@@ -22,7 +22,7 @@ export interface CreateProductData {
   unit: string;
   status: number;
   type: number;
-  images: string[];
+  images?: string[];
 }
 
 // API endpoints

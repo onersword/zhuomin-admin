@@ -39,9 +39,14 @@ const ItemTypes = {
 };
 
 // 图片项组件
-const ImageItem = ({ file, index, moveImage, onDelete }: { 
-  file: File; 
-  index: number; 
+const ImageItem = ({
+  file,
+  index,
+  moveImage,
+  onDelete,
+}: {
+  file: File;
+  index: number;
   moveImage: (dragIndex: number, hoverIndex: number) => void;
   onDelete: (index: number) => void;
 }) => {
@@ -65,7 +70,8 @@ const ImageItem = ({ file, index, moveImage, onDelete }: {
       if (dragIndex === hoverIndex) return;
 
       const hoverBoundingRect = ref.current.getBoundingClientRect();
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
       if (!clientOffset) return;
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
@@ -141,70 +147,19 @@ export function AddProductModal({
       newErrors.push("产品简介不能为空");
     }
 
-    // 验证价格
-    if (!price || Number.isNaN(parseFloat(price))) {
-      newErrors.push("请检查价格");
-    }
-
-    // 验证单位
-    if (!unit) {
-      newErrors.push("单位不能为空");
-    }
-
-    // 验证图片
-    if (imageFiles.length === 0) {
-      newErrors.push("请上传至少一张产品图片");
-    }
-
     return newErrors;
-  };
-
-  // 处理图片上传
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const fileArray = Array.from(e.target.files);
-      // 添加新图片到现有图片数组
-      setImageFiles((prev) => [...prev, ...fileArray]);
-
-      // 清空文件输入，以便下次可以选择相同的文件
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
-
-  // 删除图片
-  const handleDeleteImage = (indexToRemove: number) => {
-    setImageFiles((prevFiles) =>
-      prevFiles.filter((_, index) => index !== indexToRemove)
-    );
-  };
-
-  // 移动图片
-  const moveImage = (dragIndex: number, hoverIndex: number) => {
-    setImageFiles((prevFiles) => {
-      const newFiles = [...prevFiles];
-      const [removed] = newFiles.splice(dragIndex, 1);
-      newFiles.splice(hoverIndex, 0, removed);
-      return newFiles;
-    });
-  };
-
-  // 触发文件选择对话框
-  const triggerFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
   };
 
   const handleSubmit = async () => {
     const newErrors = validForm();
+
     if (newErrors.length > 0) {
       addToast({
         title: "错误",
         description: newErrors[0],
         color: "danger",
       });
+
       return;
     }
     try {
@@ -214,37 +169,22 @@ export function AddProductModal({
       const productData: CreateProductData = {
         name,
         description,
-        price: parseFloat(price),
-        unit,
-        status,
-        type,
-        images: [],
+        price: 1,
+        unit: "次",
+        status: ProductStatus.ONLINE,
+        type: ProductType.Gold,
       };
 
-      // 先上传图片
-      if (imageFiles.length > 0) {
-        setUploadLoading(true);
-        const uploadPromises = imageFiles.map((file) =>
-          commonApi.uploadImage(file)
-        );
-        const uploadResults = await Promise.all(uploadPromises);
+      // 创建产品
+      const res = await productApi.createProduct(productData);
+      console.log("create product res", res);
 
-        // 提取图片ID
-        const imageIds = uploadResults.map((result) => result.file_id);
-        productData.images = imageIds;
-        setUploadLoading(false);
-
-        // 创建产品
-        const res = await productApi.createProduct(productData);
-        console.log("create product res", res);
-
-        addToast({
-          title: "成功",
-          description: "产品创建成功",
-          color: "success",
-        });
-        onSuccess();
-      }
+      addToast({
+        title: "成功",
+        description: "产品创建成功",
+        color: "success",
+      });
+      onSuccess();
     } catch (error) {
       console.error("创建产品失败", error);
       addToast({
@@ -304,139 +244,6 @@ export function AddProductModal({
                     }}
                   />
                 </div>
-
-                <div className="">
-                  <Select
-                    placeholder="请选择产品类型"
-                    label="产品类型"
-                    labelPlacement="outside"
-                    selectedKeys={[type.toString()]}
-                    onChange={(e) => {
-                      setType(parseInt(e.target.value));
-                    }}
-                    variant="bordered"
-                  >
-                    {typeOptions.map((option) => (
-                      <SelectItem
-                        key={option.value}
-                        textValue={option.label}
-                        className="hover:!bg-gray-100"
-                      >
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <Input
-                      label="价格"
-                      isRequired
-                      labelPlacement="outside"
-                      type="number"
-                      placeholder="请输入价格"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      variant="bordered"
-                      className="w-full"
-                      validate={(value) => {
-                        if (!value) {
-                          return "价格不能为空";
-                        } else if (
-                          Number.isNaN(parseFloat(value)) ||
-                          parseFloat(value) <= 0
-                        ) {
-                          return "价格不正确";
-                        }
-                        return true;
-                      }}
-                    />
-                  </div>
-
-                  <div className="flex-1">
-                    <Input
-                      label="单位"
-                      labelPlacement="outside"
-                      placeholder="请输入单位，如：次、节、天"
-                      value={unit}
-                      onChange={(e) => setUnit(e.target.value)}
-                      variant="bordered"
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-
-                <div className="">
-                  <Select
-                    placeholder="请选择状态"
-                    label="状态"
-                    labelPlacement="outside"
-                    selectedKeys={[status.toString()]}
-                    onChange={(e) => {
-                      setStatus(parseInt(e.target.value));
-                    }}
-                    variant="bordered"
-                  >
-                    {statusOptions.map((option) => (
-                      <SelectItem
-                        key={option.value}
-                        textValue={option.label}
-                        className="hover:!bg-gray-100"
-                      >
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-
-                <div>
-                  {/* 隐藏真正的文件输入框 */}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    multiple
-                    onChange={handleImageChange}
-                    className="hidden"
-                    accept="image/*"
-                  />
-
-                  <div className="flex flex-col">
-                    <label className="block text-sm font-medium mb-1">
-                      产品图片 <span className="text-red-500">*</span>
-                    </label>
-
-                    {/* 显示当前上传的图片 */}
-                    {imageFiles.length > 0 && (
-                      <DndProvider backend={HTML5Backend}>
-                        <div className="mt-2 flex gap-2 flex-wrap mb-3">
-                          {imageFiles.map((file, index) => (
-                            <ImageItem
-                              key={index}
-                              file={file}
-                              index={index}
-                              moveImage={moveImage}
-                              onDelete={handleDeleteImage}
-                            />
-                          ))}
-                        </div>
-                      </DndProvider>
-                    )}
-
-                    {/* 自定义上传按钮 */}
-                    <Button
-                      variant="bordered"
-                      color="primary"
-                      onPress={triggerFileInput}
-                      className="mt-1"
-                    >
-                      <CloudArrowUpIcon />
-                      上传产品图片
-                    </Button>
-                    <small className="text-gray-500 mt-1">
-                      支持 JPG、PNG 格式图片(可拖动排序)
-                    </small>
-                  </div>
-                </div>
               </div>
             </Card>
           </div>
@@ -444,9 +251,9 @@ export function AddProductModal({
         <ModalFooter>
           <Button
             color="primary"
-            isLoading={loading || uploadLoading}
+            isLoading={loading}
             onPress={handleSubmit}
-            isDisabled={loading || uploadLoading}
+            isDisabled={loading}
           >
             添加
           </Button>

@@ -59,24 +59,9 @@ export default function ProductsPage() {
           </Button>
         </div>
       </div>
-      
-      <Tabs
-        selectedKey={getKeyString(status)}
-        variant="underlined"
-        onSelectionChange={(key) => {
-          setStatus(
-            key === "online" ? ProductStatus.ONLINE : ProductStatus.OFFLINE,
-          );
-        }}
-      >
-        <Tab key={"online"} title="已上架产品">
-          {/* <div className="flex items-center gap-2">已上架产品</div> */}
-        </Tab>
-        <Tab key={"offline"} title="已下架产品" />
-      </Tabs>
 
       <ProductContext.Provider value={{ products, loading, getList }}>
-        <ProductList status={status} />
+        <ProductList />
       </ProductContext.Provider>
       <AddProductModal
         isOpen={addModalOpen}
