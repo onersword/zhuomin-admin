@@ -17,6 +17,8 @@ import UploadFileModal from "./components/UploadFileModal";
 import { userApi } from "@/requests/user";
 import { usePagination } from "@/hooks/usePagination";
 import DeleteNoteModal from "./components/DeleteNoteModal";
+import { useModal } from "heroui-modal-provider";
+import { ComfirmModal } from "@/components/comfirmModal";
 
 const columns = [
   {
@@ -51,6 +53,30 @@ export default function Files({ userId }: { userId: string }) {
       pageSize: 20,
     });
 
+  const { showModal } = useModal();
+
+  const onDelete = (id: string) => {
+    // setSelectedFile(id);
+    // setDeleteModalOpen(true);
+    showModal(ComfirmModal, {
+      content: "确定要删除这条体检报告吗？此操作不可恢复。",
+      onConfirm: async (props) => {
+        try {
+          await userApi.deleteUserFile(userId, id);
+          addToast({
+            title: "成功",
+            description: "删除成功",
+            color: "success",
+          });
+          props.close();
+          getFiles();
+        } catch (error) {
+          console.error("Failed to delete file:", error);
+        }
+      },
+    });
+  };
+
   const renderCell = useCallback((item: any, columnKey: string) => {
     switch (columnKey) {
       case "name":
@@ -77,8 +103,9 @@ export default function Files({ userId }: { userId: string }) {
               color="danger"
               size="sm"
               onPress={() => {
-                setSelectedFile(item);
-                setDeleteModalOpen(true);
+                // setSelectedFile(item);
+                // setDeleteModalOpen(true);
+                onDelete(item.id);
               }}
             >
               删除
@@ -94,43 +121,6 @@ export default function Files({ userId }: { userId: string }) {
       setFiles(res);
       setLoading(false);
     });
-  };
-
-  const handleUploadFile = async (file: File) => {
-    try {
-      const formData = new FormData();
-
-      formData.append("file", file);
-
-      await userApi.uploadUserFile(userId, formData);
-      addToast({
-        title: "成功",
-        description: "文件上传成功",
-        color: "success",
-      });
-      getFiles(); // Refresh the file list
-    } catch (error) {
-      addToast({
-        title: "错误",
-        description: "文件上传失败",
-        color: "danger",
-      });
-    }
-  };
-
-  const handleDeleteFile = async () => {
-    if (!selectedFile) return;
-    try {
-      await userApi.deleteUserFile(userId,selectedFile.id);
-      addToast({
-        title: "成功",
-        description: "删除成功",
-        color: "success",
-      });
-      getFiles();
-    } catch (error) {
-      console.error("Failed to delete file:", error);
-    }
   };
 
   useEffect(() => {
@@ -203,18 +193,6 @@ export default function Files({ userId }: { userId: string }) {
         onOpenChange={setUploadModalOpen}
         userId={userId}
       />
-      {
-        selectedFile &&(
-          <>
-           <DeleteNoteModal
-            isOpen={deleteModalOpen}
-            onConfirm={handleDeleteFile}
-            onOpenChange={setDeleteModalOpen}
-            content="确定要删除这条体检报告吗？此操作不可恢复。"
-          />
-          </>
-        )
-      }
     </>
   );
 }
