@@ -22,6 +22,7 @@
     "buffer": "6.0.3",
     "clsx": "2.1.1",
     "framer-motion": "11.15.0",
+    "heroui-modal-provider": "1.0.0",
     "iconv-lite": "0.6.3",
     "moment": "2.30.1",
     "papaparse": "5.5.2",

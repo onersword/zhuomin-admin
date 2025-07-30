@@ -16,6 +16,7 @@ import UploadFileModal from "./components/UploadFileModal";
 
 import { userApi } from "@/requests/user";
 import { usePagination } from "@/hooks/usePagination";
+import DeleteNoteModal from "./components/DeleteNoteModal";
 
 const columns = [
   {
@@ -43,7 +44,7 @@ export default function Files({ userId }: { userId: string }) {
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
-
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
       data: files,
@@ -71,6 +72,16 @@ export default function Files({ userId }: { userId: string }) {
               }}
             >
               查看
+            </Button>
+            <Button
+              color="danger"
+              size="sm"
+              onPress={() => {
+                setSelectedFile(item);
+                setDeleteModalOpen(true);
+              }}
+            >
+              删除
             </Button>
           </div>
         );
@@ -104,6 +115,21 @@ export default function Files({ userId }: { userId: string }) {
         description: "文件上传失败",
         color: "danger",
       });
+    }
+  };
+
+  const handleDeleteFile = async () => {
+    if (!selectedFile) return;
+    try {
+      await userApi.deleteUserFile(userId,selectedFile.id);
+      addToast({
+        title: "成功",
+        description: "删除成功",
+        color: "success",
+      });
+      getFiles();
+    } catch (error) {
+      console.error("Failed to delete file:", error);
     }
   };
 
@@ -177,6 +203,18 @@ export default function Files({ userId }: { userId: string }) {
         onOpenChange={setUploadModalOpen}
         userId={userId}
       />
+      {
+        selectedFile &&(
+          <>
+           <DeleteNoteModal
+            isOpen={deleteModalOpen}
+            onConfirm={handleDeleteFile}
+            onOpenChange={setDeleteModalOpen}
+            content="确定要删除这条体检报告吗？此操作不可恢复。"
+          />
+          </>
+        )
+      }
     </>
   );
 }

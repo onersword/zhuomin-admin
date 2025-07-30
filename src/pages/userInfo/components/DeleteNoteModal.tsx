@@ -11,12 +11,14 @@ interface DeleteNoteModalProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onConfirm: () => void;
+  content: string;
 }
 
 export default function DeleteNoteModal({
   isOpen,
   onOpenChange,
   onConfirm,
+  content,
 }: DeleteNoteModalProps) {
   const handleConfirm = () => {
     onConfirm();
@@ -30,7 +32,7 @@ export default function DeleteNoteModal({
           <>
             <ModalHeader>删除确认</ModalHeader>
             <ModalBody>
-              <p>确定要删除这条健康小结吗？此操作不可恢复。</p>
+              <p>{content}</p>
             </ModalBody>
             <ModalFooter>
               <Button color="danger" onPress={onClose}>

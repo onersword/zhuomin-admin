@@ -216,6 +216,7 @@ export default function Notes({ userId }: { userId: string }) {
             onOpenChange={setEditModalOpen}
           />
           <DeleteNoteModal
+          content="确定要删除这条健康小结吗？此操作不可恢复。"
             isOpen={deleteModalOpen}
             onConfirm={handleDeleteNote}
             onOpenChange={setDeleteModalOpen}
@@ -224,8 +225,9 @@ export default function Notes({ userId }: { userId: string }) {
       )}
 
       <AddNoteModal
+        userId={userId}
         isOpen={addModalOpen}
-        onConfirm={handleAddNote}
+        onSuccess={getNotes}
         onOpenChange={setAddModalOpen}
       />
     </>

@@ -17,15 +17,20 @@ export default function UserInfoPage() {
   const [userInfo, setUserInfo] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<string>("products");
 
+  const fetchUserInfo = async () => {
+    if (!userId) return;
+    const res = await userApi.getUserById(userId);
+
+    setUserInfo(res);
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, [userId]);
+
   if (!userId) {
     return <div>用户ID不存在</div>;
   }
-
-  useEffect(() => {
-    userApi.getUserById(userId).then((res) => {
-      setUserInfo(res);
-    });
-  }, [userId]);
 
   return (
     <DefaultLayout>
@@ -60,7 +65,9 @@ export default function UserInfoPage() {
                   className="text-[#413B3B] bg-white"
                   color="default"
                   size="sm"
-                  onPress={() => {window.open(userInfo.pdfUrl)}}
+                  onPress={() => {
+                    window.open(userInfo.pdfUrl);
+                  }}
                 >
                   查看健康档案
                 </Button>

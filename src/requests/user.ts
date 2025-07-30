@@ -31,6 +31,10 @@ export const userApi = {
     const response = await http.get<any>(`/api/users/${id}/products`);
     return response;
   },
+  deleteUserProduct: async (id: string, productId: string): Promise<any> => {
+    const response = await http.delete<any>(`/api/users/${id}/products/${productId}`);
+    return response;
+  },
 
   getUserNotes: async (id: string): Promise<any> => {
     const response = await http.get<any>(`/api/users/${id}/notes`);
@@ -49,6 +53,10 @@ export const userApi = {
 
   deleteUserNote: async (userId: string, noteId: string): Promise<any> => {
     const response = await http.delete<any>(`/api/users/${userId}/notes/${noteId}`);
+    return response;
+  },
+  deleteUserFile: async (userId: string, fileId: string): Promise<any> => {
+    const response = await http.delete<any>(`/api/files/${fileId}`);
     return response;
   },
 
@@ -77,6 +85,16 @@ export const userApi = {
   // Upload user file
   uploadUserFile: async (userId: string, formData: FormData): Promise<any> => {
     const response = await http.post<any>(`/api/users/${userId}/files`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response;
+  },
+
+  // Upload user file
+  uploadNoteFile: async (userId: string, formData: FormData): Promise<any> => {
+    const response = await http.post<any>(`/api/users/${userId}/notes`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
