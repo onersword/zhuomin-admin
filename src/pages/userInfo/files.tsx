@@ -22,7 +22,7 @@ import { ComfirmModal } from "@/components/comfirmModal";
 
 const columns = [
   {
-    label: "文件名称",
+    label: "体检报告",
     key: "name",
     align: "start" as const,
   },
