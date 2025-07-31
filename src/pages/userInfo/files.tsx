@@ -56,8 +56,6 @@ export default function Files({ userId }: { userId: string }) {
   const { showModal } = useModal();
 
   const onDelete = (id: string) => {
-    // setSelectedFile(id);
-    // setDeleteModalOpen(true);
     showModal(ComfirmModal, {
       content: "确定要删除这条体检报告吗？此操作不可恢复。",
       onConfirm: async (props) => {
@@ -103,8 +101,6 @@ export default function Files({ userId }: { userId: string }) {
               color="danger"
               size="sm"
               onPress={() => {
-                // setSelectedFile(item);
-                // setDeleteModalOpen(true);
                 onDelete(item.id);
               }}
             >

@@ -1,4 +1,5 @@
 import {
+  addToast,
   Button,
   Pagination,
   TableBody,
@@ -11,6 +12,8 @@ import { Table } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 
+import { useModal } from "heroui-modal-provider";
+
 import ViewNoteModal from "./components/ViewNoteModal";
 import EditNoteModal from "./components/EditNoteModal";
 import DeleteNoteModal from "./components/DeleteNoteModal";
@@ -18,11 +21,13 @@ import AddNoteModal from "./components/AddNoteModal";
 
 import { userApi } from "@/requests/user";
 import { usePagination } from "@/hooks/usePagination";
+import { ComfirmModal } from "@/components/comfirmModal";
+
 
 const columns = [
   {
-    label: "内容",
-    key: "content",
+    label: "健康小结",
+    key: "name",
     align: "start" as const,
   },
   {
@@ -73,6 +78,27 @@ export default function Notes({ userId }: { userId: string }) {
     }
   };
 
+  const { showModal } = useModal();
+  const onDelete = (id: string) => {
+    showModal(ComfirmModal, {
+      content: "确定要删除这条健康小结吗？此操作不可恢复。",
+      onConfirm: async (props) => {
+        try {
+          await userApi.deleteUserNote(userId, id);
+          addToast({
+            title: "成功",
+            description: "删除成功",
+            color: "success",
+          });
+          props.close();
+          getNotes();
+        } catch (error) {
+          console.error("Failed to delete note:", error);
+        }
+      },
+    });
+  };
+
   const handleAddNote = async (content: string) => {
     try {
       await userApi.createUserNote(userId, { content });
@@ -84,8 +110,8 @@ export default function Notes({ userId }: { userId: string }) {
 
   const renderCell = useCallback((item: any, columnKey: string) => {
     switch (columnKey) {
-      case "content":
-        return <div className="line-clamp-1">{item.content}</div>;
+      case "name":
+        return <div className="line-clamp-1">{item.name}</div>;
       case "updatedAt":
         return (
           <div className="tabular-nums">
@@ -99,28 +125,16 @@ export default function Notes({ userId }: { userId: string }) {
               color="primary"
               size="sm"
               onPress={() => {
-                setSelectedNote(item);
-                setViewModalOpen(true);
+                window.open(item.url, "_blank");
               }}
             >
               查看
             </Button>
             <Button
-              color="primary"
-              size="sm"
-              onPress={() => {
-                setSelectedNote(item);
-                setEditModalOpen(true);
-              }}
-            >
-              编辑
-            </Button>
-            <Button
               color="danger"
               size="sm"
               onPress={() => {
-                setSelectedNote(item);
-                setDeleteModalOpen(true);
+                onDelete(item.id);
               }}
             >
               删除

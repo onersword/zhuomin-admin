@@ -7,6 +7,7 @@ import {
   TableRow,
   Pagination,
   Button,
+  addToast,
 } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
@@ -15,6 +16,8 @@ import AddProductModal from "./components/AddProductModal";
 
 import { userApi } from "@/requests/user";
 import { usePagination } from "@/hooks/usePagination";
+import { useModal } from "heroui-modal-provider";
+import { ComfirmModal } from "@/components/comfirmModal";
 
 const columns = [
   {
@@ -29,9 +32,9 @@ const columns = [
     align: "start" as const,
   },
   {
-    label: "购买时间",
-    key: "createdAt",
-    width: 200,
+    label: "操作",
+    key: "actions",
+    width: 100,
     align: "end" as const,
   },
 ];
@@ -40,6 +43,7 @@ export default function ProductList({ userId }: { userId: string }) {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { showModal } = useModal();
 
   const { currentPage, setCurrentPage, currentPageData, totalPages } =
     usePagination({
@@ -47,17 +51,44 @@ export default function ProductList({ userId }: { userId: string }) {
       pageSize: 20,
     });
 
+  const onDelete = (id: string) => {
+    showModal(ComfirmModal, {
+      content: "确定要删除这条已购产品吗？此操作不可恢复。",
+      onConfirm: async (props) => {
+        try {
+          await userApi.deleteUserProduct(userId, id);
+          addToast({
+            title: "成功",
+            description: "删除成功",
+            color: "success",
+          });
+          props.close();
+          getProducts();
+        } catch (error) {
+          console.error("Failed to delete file:", error);
+        }
+      },
+    });
+  };
+
   const renderCell = useCallback((item: any, columnKey: string) => {
     switch (columnKey) {
       case "name":
         return <div>{item.name}</div>;
       case "description":
-        return <div className="line-clamp-1">{item.description}</div>;
-
-      case "createdAt":
+        return <div>{item.description}</div>;
+      case "actions":
         return (
-          <div className="tabular-nums">
-            {moment(item.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+          <div className="flex gap-2 justify-end">
+            <Button
+              color="danger"
+              size="sm"
+              onPress={() => {
+                onDelete(item.id);
+              }}
+            >
+              删除
+            </Button>
           </div>
         );
     }

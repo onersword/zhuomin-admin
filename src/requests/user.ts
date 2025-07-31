@@ -52,7 +52,7 @@ export const userApi = {
   },
 
   deleteUserNote: async (userId: string, noteId: string): Promise<any> => {
-    const response = await http.delete<any>(`/api/users/${userId}/notes/${noteId}`);
+    const response = await http.delete<any>(`/api/notes/${noteId}`);
     return response;
   },
   deleteUserFile: async (userId: string, fileId: string): Promise<any> => {
