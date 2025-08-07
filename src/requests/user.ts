@@ -126,4 +126,28 @@ export const userApi = {
     const response = await http.patch<any>(`/api/users/${userId}`, data);
     return response;
   },
+
+  // Get user cards
+  getUserCards: async (userId: string): Promise<any> => {
+    const response = await http.get<any>(`/api/users/${userId}/cards`);
+    return response;
+  },
+
+  // Create user card
+  createUserCard: async (userId: string, data: { title: string; content: string }): Promise<any> => {
+    const response = await http.post<any>(`/api/users/${userId}/cards`, data);
+    return response;
+  },
+
+  // Update user card
+  updateUserCard: async (userId: string, cardId: string, data: { title: string; content: string }): Promise<any> => {
+    const response = await http.patch<any>(`/api/users/${userId}/cards/${cardId}`, data);
+    return response;
+  },
+
+  // Delete user card
+  deleteUserCard: async (cardId: string): Promise<any> => {
+    const response = await http.delete<any>(`/api/cards/${cardId}`);
+    return response;
+  },
 };

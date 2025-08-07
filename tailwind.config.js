@@ -70,7 +70,7 @@ export default {
             "800": "#656567",
             "900": "#404041",
             "foreground": "#000",
-            "DEFAULT": "#d4d4d8"
+            "DEFAULT": "#333"
           },
           "primary": {
             "50": "#e8e6ff",

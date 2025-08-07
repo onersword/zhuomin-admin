@@ -250,9 +250,9 @@ POST /api/users/{userId}/notes
 例子
 
 ```
-curl --location 'http://localhost:3000/api/users/7b9997a2-cbfe-4ea5-9403-fa8d55c123d4/notes' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzQ0NTE0NzYyfQ.8EK6xObqI7y9vHrOrdxptO46DRS8m5OmtGA6UvjBvMU' \
---form 'file=@"/Users/pp/Downloads/体检报告20240212.pdf"'
+curl --location 'http://localhost:3000/api/users/c207b3d0-15df-4127-85f4-815d136dc5be/notes' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzU0NDQ3MjEzfQ.DkPI53m9MDwkepoDFC1uxiMGmV98gAXHpzgMuvALG1s' \
+--form 'file=@"/Users/pp/Downloads/体检报告20250122.pdf"'
 ```
 
 响应:
@@ -319,6 +319,65 @@ POST /api/users/{userId}/products
   "productId": "产品 ID"
 }
 ```
+
+## 会员卡接口
+
+### 获取会员卡列表
+
+```
+GET /api/users/{userId}/cards
+```
+
+响应:
+
+```json
+[
+  {
+    "id": "会员卡 ID",
+    "userId": "用户 ID",
+    "title": "会员卡标题",
+    "content": "会员卡内容",
+  }
+]
+```
+
+### 添加会员卡
+
+```
+POST /api/users/{userId}/cards
+```
+
+
+请求体:
+
+```json
+{
+  "title": "会员卡标题",
+  "content": "会员卡内容"
+}
+```
+
+### 更新会员卡
+
+```
+PATCH /api/users/{userId}/cards/{cardId}
+```
+
+请求体:
+
+```json
+{
+  "title": "会员卡标题",
+  "content": "会员卡内容"
+}
+```
+
+### 删除会员卡
+
+```
+DELETE /api/cards/{cardId}
+```
+
 
 ## 图片接口
 

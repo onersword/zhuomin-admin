@@ -6,6 +6,7 @@ import ProductList from "./productList";
 import Notes from "./notes";
 import Reminds from "./reminds";
 import Files from "./files";
+import Cards from "./cards";
 
 import DefaultLayout from "@/layouts/default";
 import { NumberIcon, PhoneIcon } from "@/components/icons";
@@ -91,6 +92,7 @@ export default function UserInfoPage() {
               onSelectionChange={(key) => setActiveTab(key as string)}
             >
               <Tab key="products" title="已购产品" />
+              <Tab key="cards" title="会员卡" />
               <Tab key="notes" title="健康小结" />
               <Tab key="files" title="体检报告" />
               <Tab key="reminds" title="预约管理" />
@@ -99,6 +101,7 @@ export default function UserInfoPage() {
             {activeTab === "notes" && <Notes userId={userId} />}
             {activeTab === "files" && <Files userId={userId} />}
             {activeTab === "reminds" && <Reminds userId={userId} />}
+            {activeTab === "cards" && <Cards userId={userId} />}
           </div>
         </div>
       </div>
