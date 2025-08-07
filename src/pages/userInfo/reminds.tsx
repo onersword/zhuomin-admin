@@ -11,12 +11,14 @@ import {
 import { Table } from "@heroui/react";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
+import { useModal } from "heroui-modal-provider";
 
 import AddRemindModal from "./components/AddRemindModal";
-import DeleteRemindModal from "./components/DeleteRemindModal";
 
 import { userApi } from "@/requests/user";
 import { usePagination } from "@/hooks/usePagination";
+import { ComfirmModal } from "@/components/comfirmModal";
+
 
 const columns = [
   {
@@ -45,6 +47,7 @@ const columns = [
 ];
 
 export default function Reminds({ userId }: { userId: string }) {
+  const { showModal } = useModal();
   const [reminds, setReminds] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -101,6 +104,26 @@ export default function Reminds({ userId }: { userId: string }) {
     }
   };
 
+  const onDelete = (id: string) => {
+    showModal(ComfirmModal, {
+      content: "确定要删除这条提醒吗？此操作不可恢复",
+      onConfirm: async (props) => {
+        try {
+          await userApi.deleteUserReminder(id);
+          addToast({
+            title: "成功",
+            description: "删除成功",
+            color: "success",
+          });
+          props.close();
+          getReminds();
+        } catch (error) {
+          console.error("Failed to delete file:", error);
+        }
+      },
+    });
+  };
+
   const renderCell = useCallback((item: any, columnKey: string) => {
     switch (columnKey) {
       case "title":
@@ -125,10 +148,8 @@ export default function Reminds({ userId }: { userId: string }) {
             <Button
               color="danger"
               size="sm"
-              onPress={() => {
-                setSelectedRemind(item);
-                setDeleteModalOpen(true);
-              }}
+              variant="light"
+              onPress={() => onDelete(item.id)}
             >
               删除
             </Button>
@@ -213,12 +234,6 @@ export default function Reminds({ userId }: { userId: string }) {
         isOpen={addModalOpen}
         onConfirm={handleAddRemind}
         onOpenChange={setAddModalOpen}
-      />
-
-      <DeleteRemindModal
-        isOpen={deleteModalOpen}
-        onConfirm={handleDeleteRemind}
-        onOpenChange={setDeleteModalOpen}
       />
     </>
   );

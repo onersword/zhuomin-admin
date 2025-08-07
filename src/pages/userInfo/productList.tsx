@@ -83,6 +83,7 @@ export default function ProductList({ userId }: { userId: string }) {
             <Button
               color="danger"
               size="sm"
+              variant="light"
               onPress={() => {
                 onDelete(item.id);
               }}

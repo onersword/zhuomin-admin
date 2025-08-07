@@ -86,6 +86,7 @@ export default function Files({ userId }: { userId: string }) {
           <div className="flex gap-2 justify-end">
             <Button
               color="primary"
+              variant="light"
               size="sm"
               onPress={() => {
                 window.open(item.url, "_blank");
@@ -95,6 +96,7 @@ export default function Files({ userId }: { userId: string }) {
             </Button>
             <Button
               color="danger"
+              variant="light"
               size="sm"
               onPress={() => {
                 onDelete(item.id);

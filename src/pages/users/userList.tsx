@@ -75,6 +75,7 @@ export default function UserList({ status }: { status: UserStatus }) {
             <Button
               color="primary"
               size="sm"
+              variant="light"
               onPress={() => navigate(`/users/${user.id}`)}
             >
               管理
@@ -82,6 +83,7 @@ export default function UserList({ status }: { status: UserStatus }) {
             <Button
               color="danger"
               size="sm"
+              variant="light"
               onPress={() => deleteUser(user.id)}
             >
               删除
@@ -89,11 +91,13 @@ export default function UserList({ status }: { status: UserStatus }) {
           </>
         );
       }
+
       return (
         <>
           <Button
             color="primary"
             size="sm"
+            variant="light"
             onPress={() => {
               setUser(user);
               setReviewModalOpen(true);
@@ -101,7 +105,12 @@ export default function UserList({ status }: { status: UserStatus }) {
           >
             审核
           </Button>
-          <Button color="danger" size="sm" onPress={() => deleteUser(user.id)}>
+          <Button
+            color="danger"
+            size="sm"
+            variant="light"
+            onPress={() => deleteUser(user.id)}
+          >
             删除
           </Button>
         </>

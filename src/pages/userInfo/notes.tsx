@@ -16,7 +16,6 @@ import { useModal } from "heroui-modal-provider";
 
 import ViewNoteModal from "./components/ViewNoteModal";
 import EditNoteModal from "./components/EditNoteModal";
-import DeleteNoteModal from "./components/DeleteNoteModal";
 import AddNoteModal from "./components/AddNoteModal";
 
 import { userApi } from "@/requests/user";
@@ -124,6 +123,7 @@ export default function Notes({ userId }: { userId: string }) {
             <Button
               color="primary"
               size="sm"
+              variant="light"
               onPress={() => {
                 window.open(item.url, "_blank");
               }}
@@ -133,6 +133,7 @@ export default function Notes({ userId }: { userId: string }) {
             <Button
               color="danger"
               size="sm"
+              variant="light"
               onPress={() => {
                 onDelete(item.id);
               }}
@@ -228,12 +229,6 @@ export default function Notes({ userId }: { userId: string }) {
             note={selectedNote}
             onConfirm={handleEditNote}
             onOpenChange={setEditModalOpen}
-          />
-          <DeleteNoteModal
-          content="确定要删除这条健康小结吗？此操作不可恢复。"
-            isOpen={deleteModalOpen}
-            onConfirm={handleDeleteNote}
-            onOpenChange={setDeleteModalOpen}
           />
         </>
       )}

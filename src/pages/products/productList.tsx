@@ -136,12 +136,13 @@ export default function ProductList() {
       case "actions":
         return (
           <div className="flex gap-2 justify-end">
-            <Button color="primary" size="sm" onPress={() => edit(product)}>
+            <Button color="primary" size="sm" variant="light" onPress={() => edit(product)}>
               编辑
             </Button>
             <Button
               color="danger"
               size="sm"
+              variant="light"
               onPress={() => deleteProduct(product)}
             >
               删除

@@ -42,13 +42,14 @@ export const ComfirmModal = ({
               <p>{content}</p>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" onPress={close}>
+              <Button color="danger" variant="light" onPress={close}>
                 取消
               </Button>
               <Button
                 color="primary"
                 isDisabled={isLoading}
                 isLoading={isLoading}
+                variant="light"
                 onPress={() => handleConfirm(close)}
               >
                 确定
